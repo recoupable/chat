@@ -126,6 +126,7 @@ import GetChatsSkeleton from "./tools/chats/GetChatsSkeleton";
 import GetChatsResult, {
   GetChatsResultType,
 } from "./tools/chats/GetChatsResult";
+import type { TaskRunStatus } from "@/lib/tasks/getTaskRunStatus";
 import RunSandboxCommandSkeleton from "./tools/sandbox/RunSandboxCommandSkeleton";
 import RunSandboxCommandResult from "./tools/sandbox/RunSandboxCommandResult";
 import GetTaskRunStatusSkeleton from "./tools/sandbox/GetTaskRunStatusSkeleton";
@@ -611,9 +612,10 @@ export function getToolResultComponent(part: ToolUIPart | DynamicToolUIPart) {
       </div>
     );
   } else if (toolName === "get_task_run_status") {
+    const toolArgs = (part as ToolUIPart & { args?: { runId?: string } }).args;
     return (
       <div key={toolCallId}>
-        <GetTaskRunStatusResult result={result as Parameters<typeof GetTaskRunStatusResult>[0]["result"]} />
+        <GetTaskRunStatusResult runId={toolArgs?.runId ?? "unknown"} result={result as TaskRunStatus} />
       </div>
     );
   }
