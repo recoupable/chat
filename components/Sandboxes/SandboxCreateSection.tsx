@@ -8,13 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import useCreateSandbox from "@/hooks/useCreateSandbox";
 
-interface SandboxCreateSectionProps {
-  onSuccess: () => void;
-}
-
-export default function SandboxCreateSection({
-  onSuccess,
-}: SandboxCreateSectionProps) {
+export default function SandboxCreateSection() {
   const [prompt, setPrompt] = useState("");
   const { createSandbox, isCreating } = useCreateSandbox();
   const { push } = useRouter();
@@ -30,10 +24,6 @@ export default function SandboxCreateSection({
       const runId = sandboxes[0]?.runId;
       if (runId) {
         push(`/tasks/${runId}`);
-      } else {
-        toast.success("Sandbox created successfully");
-        setPrompt("");
-        onSuccess();
       }
     } catch {
       // Error is handled by the hook
