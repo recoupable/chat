@@ -126,6 +126,10 @@ import GetChatsSkeleton from "./tools/chats/GetChatsSkeleton";
 import GetChatsResult, {
   GetChatsResultType,
 } from "./tools/chats/GetChatsResult";
+import RunSandboxCommandSkeleton from "./tools/sandbox/RunSandboxCommandSkeleton";
+import RunSandboxCommandResult from "./tools/sandbox/RunSandboxCommandResult";
+import GetTaskRunStatusSkeleton from "./tools/sandbox/GetTaskRunStatusSkeleton";
+import GetTaskRunStatusResult from "./tools/sandbox/GetTaskRunStatusResult";
 
 type CallToolResult = {
   content: TextContent[];
@@ -309,6 +313,18 @@ export function getToolCallComponent(part: ToolUIPart) {
     return (
       <div key={toolCallId}>
         <GetChatsSkeleton />
+      </div>
+    );
+  } else if (toolName === "run_sandbox_command") {
+    return (
+      <div key={toolCallId}>
+        <RunSandboxCommandSkeleton />
+      </div>
+    );
+  } else if (toolName === "get_task_run_status") {
+    return (
+      <div key={toolCallId}>
+        <GetTaskRunStatusSkeleton />
       </div>
     );
   }
@@ -586,6 +602,18 @@ export function getToolResultComponent(part: ToolUIPart | DynamicToolUIPart) {
     return (
       <div key={toolCallId}>
         <GetChatsResult result={result as GetChatsResultType} />
+      </div>
+    );
+  } else if (toolName === "run_sandbox_command") {
+    return (
+      <div key={toolCallId}>
+        <RunSandboxCommandResult result={result as { sandboxId: string; sandboxStatus: string; timeout: number; createdAt: string; runId?: string }} />
+      </div>
+    );
+  } else if (toolName === "get_task_run_status") {
+    return (
+      <div key={toolCallId}>
+        <GetTaskRunStatusResult result={result as Parameters<typeof GetTaskRunStatusResult>[0]["result"]} />
       </div>
     );
   }
