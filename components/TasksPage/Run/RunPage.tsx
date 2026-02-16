@@ -4,6 +4,7 @@ import { Loader2, CheckCircle2, XCircle } from "lucide-react";
 import { useTaskRunStatus } from "@/hooks/useTaskRunStatus";
 import RunLogsList from "./RunLogsList";
 import CopyRunId from "./CopyRunId";
+import RunPageSkeleton from "./RunPageSkeleton";
 
 interface RunPageProps {
   runId: string;
@@ -31,12 +32,7 @@ export default function RunPage({ runId }: RunPageProps) {
   const { data, isLoading, error } = useTaskRunStatus(runId);
 
   if (isLoading || !data) {
-    return (
-      <div className="flex h-screen flex-col items-center justify-center p-4">
-        <Loader2 className="size-8 animate-spin text-muted-foreground" />
-        <p className="mt-3 text-sm text-muted-foreground">Loading run status...</p>
-      </div>
-    );
+    return <RunPageSkeleton />;
   }
 
   if (error) {
