@@ -607,10 +607,10 @@ export function getToolResultComponent(part: ToolUIPart | DynamicToolUIPart) {
       </div>
     );
   } else if (toolName === "get_task_run_status") {
-    const toolArgs = (part as ToolUIPart & { args?: { runId?: string } }).args;
+    const toolInput = (part as DynamicToolUIPart).input as { runId?: string } | undefined;
     return (
       <div key={toolCallId}>
-        <RunDetails runId={toolArgs?.runId ?? "unknown"} data={result as TaskRunStatus} />
+        <RunDetails runId={toolInput?.runId ?? "unknown"} data={result as TaskRunStatus} />
       </div>
     );
   }
