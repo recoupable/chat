@@ -3,7 +3,7 @@
 import { Loader2, CheckCircle2, XCircle } from "lucide-react";
 import { useTaskRunStatus } from "@/hooks/useTaskRunStatus";
 import RunLogsList from "./RunLogsList";
-import CopyRunId from "./CopyRunId";
+import AccountIdDisplay from "@/components/ArtistSetting/AccountIdDisplay";
 import RunPageSkeleton from "./RunPageSkeleton";
 
 interface RunPageProps {
@@ -85,7 +85,7 @@ export default function RunPage({ runId }: RunPageProps) {
       )}
 
       <div className="flex gap-4 text-xs text-muted-foreground">
-        <CopyRunId runId={runId} />
+        <AccountIdDisplay accountId={runId} label="Run" />
         {data.durationMs !== null && (
           <span>Duration: {(data.durationMs / 1000).toFixed(1)}s</span>
         )}
