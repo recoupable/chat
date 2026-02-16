@@ -13,7 +13,11 @@ export default function RunPage({ runId }: RunPageProps) {
   const { data, isLoading, error } = useTaskRunStatus(runId);
 
   if (isLoading || !data) {
-    return <RunPageSkeleton />;
+    return (
+      <div className="h-screen max-w-2xl">
+        <RunPageSkeleton />
+      </div>
+    );
   }
 
   if (error) {
@@ -27,5 +31,9 @@ export default function RunPage({ runId }: RunPageProps) {
     );
   }
 
-  return <RunDetails runId={runId} data={data} />;
+  return (
+    <div className="h-screen max-w-2xl">
+      <RunDetails runId={runId} data={data} />
+    </div>
+  );
 }

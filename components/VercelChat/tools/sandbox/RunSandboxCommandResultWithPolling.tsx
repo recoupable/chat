@@ -8,16 +8,8 @@ export default function RunSandboxCommandResultWithPolling({ runId }: { runId: s
   const { data, isLoading } = useTaskRunStatus(runId);
 
   if (isLoading || !data) {
-    return (
-      <div className="max-w-2xl [&>div]:h-auto [&>div]:p-4">
-        <RunPageSkeleton />
-      </div>
-    );
+    return <RunPageSkeleton />;
   }
 
-  return (
-    <div className="max-w-2xl [&>div]:h-auto [&>div]:p-4">
-      <RunDetails runId={runId} data={data} />
-    </div>
-  );
+  return <RunDetails runId={runId} data={data} />;
 }

@@ -319,7 +319,7 @@ export function getToolCallComponent(part: ToolUIPart) {
     );
   } else if (toolName === "run_sandbox_command" || toolName === "get_task_run_status") {
     return (
-      <div key={toolCallId} className="max-w-2xl [&>div]:h-auto [&>div]:p-4">
+      <div key={toolCallId}>
         <RunPageSkeleton />
       </div>
     );
@@ -609,7 +609,7 @@ export function getToolResultComponent(part: ToolUIPart | DynamicToolUIPart) {
   } else if (toolName === "get_task_run_status") {
     const toolArgs = (part as ToolUIPart & { args?: { runId?: string } }).args;
     return (
-      <div key={toolCallId} className="max-w-2xl [&>div]:h-auto [&>div]:p-4">
+      <div key={toolCallId}>
         <RunDetails runId={toolArgs?.runId ?? "unknown"} data={result as TaskRunStatus} />
       </div>
     );

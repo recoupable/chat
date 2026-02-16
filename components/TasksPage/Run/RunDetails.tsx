@@ -34,7 +34,7 @@ export default function RunDetails({ runId, data }: RunDetailsProps) {
   const currentStep = data.metadata?.currentStep;
 
   return (
-    <div className="mx-auto flex h-screen max-w-2xl flex-col gap-6 p-6">
+    <div className="mx-auto flex flex-col gap-6 p-6">
       <div className="flex items-center gap-3">
         {config.icon}
         <div>
