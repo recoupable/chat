@@ -127,10 +127,9 @@ import GetChatsResult, {
   GetChatsResultType,
 } from "./tools/chats/GetChatsResult";
 import type { TaskRunStatus } from "@/lib/tasks/getTaskRunStatus";
-import RunSandboxCommandSkeleton from "./tools/sandbox/RunSandboxCommandSkeleton";
+import RunPageSkeleton from "@/components/TasksPage/Run/RunPageSkeleton";
+import RunDetails from "@/components/TasksPage/Run/RunDetails";
 import RunSandboxCommandResult from "./tools/sandbox/RunSandboxCommandResult";
-import GetTaskRunStatusSkeleton from "./tools/sandbox/GetTaskRunStatusSkeleton";
-import GetTaskRunStatusResult from "./tools/sandbox/GetTaskRunStatusResult";
 
 type CallToolResult = {
   content: TextContent[];
@@ -316,16 +315,10 @@ export function getToolCallComponent(part: ToolUIPart) {
         <GetChatsSkeleton />
       </div>
     );
-  } else if (toolName === "run_sandbox_command") {
+  } else if (toolName === "run_sandbox_command" || toolName === "get_task_run_status") {
     return (
-      <div key={toolCallId}>
-        <RunSandboxCommandSkeleton />
-      </div>
-    );
-  } else if (toolName === "get_task_run_status") {
-    return (
-      <div key={toolCallId}>
-        <GetTaskRunStatusSkeleton />
+      <div key={toolCallId} className="max-w-2xl [&>div]:h-auto [&>div]:p-4">
+        <RunPageSkeleton />
       </div>
     );
   }
@@ -614,8 +607,8 @@ export function getToolResultComponent(part: ToolUIPart | DynamicToolUIPart) {
   } else if (toolName === "get_task_run_status") {
     const toolArgs = (part as ToolUIPart & { args?: { runId?: string } }).args;
     return (
-      <div key={toolCallId}>
-        <GetTaskRunStatusResult runId={toolArgs?.runId ?? "unknown"} result={result as TaskRunStatus} />
+      <div key={toolCallId} className="max-w-2xl [&>div]:h-auto [&>div]:p-4">
+        <RunDetails runId={toolArgs?.runId ?? "unknown"} data={result as TaskRunStatus} />
       </div>
     );
   }
