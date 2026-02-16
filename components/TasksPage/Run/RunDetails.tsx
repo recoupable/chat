@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Loader2, CheckCircle2, XCircle } from "lucide-react";
 import type { TaskRunStatus } from "@/lib/tasks/getTaskRunStatus";
 import RunLogsList from "./RunLogsList";
@@ -33,15 +34,21 @@ export default function RunDetails({ runId, data }: RunDetailsProps) {
   const config = STATUS_CONFIG[data.status];
   const logs = data.metadata?.logs ?? [];
   const currentStep = data.metadata?.currentStep;
+  const pathname = usePathname();
+  const isOnRunPage = pathname === `/tasks/${runId}`;
 
   return (
     <div className="mx-auto flex flex-col gap-6 p-6">
       <div className="flex items-center gap-3">
         {config.icon}
         <div>
-          <Link href={`/tasks/${runId}`} className="text-lg font-semibold hover:underline">
-            {data.taskIdentifier}
-          </Link>
+          {isOnRunPage ? (
+            <h1 className="text-lg font-semibold">{data.taskIdentifier}</h1>
+          ) : (
+            <Link href={`/tasks/${runId}`} target="_blank" className="text-lg font-semibold hover:underline">
+              {data.taskIdentifier}
+            </Link>
+          )}
           <p className={`text-sm ${config.color}`}>{config.label}</p>
         </div>
       </div>
