@@ -18,7 +18,7 @@ export default function SandboxesPage() {
           <SandboxDeleteButton onSuccess={refetch} />
         )}
       </div>
-      <SandboxCreateSection onSuccess={refetch} />
+      <SandboxCreateSection />
       {isLoading ? (
         <div className="flex items-center gap-2 text-muted-foreground">
           <Loader className="h-4 w-4 animate-spin" />
