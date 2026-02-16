@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { Loader2, CheckCircle2, XCircle, Copy, Check } from "lucide-react";
+import { Loader2, CheckCircle2, XCircle } from "lucide-react";
 import { useTaskRunStatus } from "@/hooks/useTaskRunStatus";
 import RunLogsList from "./RunLogsList";
+import CopyRunId from "./CopyRunId";
 
 interface RunPageProps {
   runId: string;
@@ -29,7 +29,6 @@ const STATUS_CONFIG = {
 
 export default function RunPage({ runId }: RunPageProps) {
   const { data, isLoading, error } = useTaskRunStatus(runId);
-  const [copied, setCopied] = useState(false);
 
   if (isLoading || !data) {
     return (
@@ -90,17 +89,7 @@ export default function RunPage({ runId }: RunPageProps) {
       )}
 
       <div className="flex gap-4 text-xs text-muted-foreground">
-        <button
-          className="inline-flex cursor-pointer items-center gap-1 hover:text-foreground"
-          onClick={() => {
-            navigator.clipboard.writeText(runId);
-            setCopied(true);
-            setTimeout(() => setCopied(false), 2000);
-          }}
-        >
-          {copied ? <Check className="size-3" /> : <Copy className="size-3" />}
-          Run: {runId.slice(0, 12)}...
-        </button>
+        <CopyRunId runId={runId} />
         {data.durationMs !== null && (
           <span>Duration: {(data.durationMs / 1000).toFixed(1)}s</span>
         )}
