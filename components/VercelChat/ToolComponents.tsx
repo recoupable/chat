@@ -127,6 +127,7 @@ import GetChatsResult, {
   GetChatsResultType,
 } from "./tools/chats/GetChatsResult";
 import RunPageSkeleton from "@/components/TasksPage/Run/RunPageSkeleton";
+import SandboxCreatedResult from "./tools/sandbox/SandboxCreatedResult";
 import RunSandboxCommandResultWithPolling from "./tools/sandbox/RunSandboxCommandResultWithPolling";
 
 type CallToolResult = {
@@ -600,13 +601,7 @@ export function getToolResultComponent(part: ToolUIPart | DynamicToolUIPart) {
     const { runId } = result as { runId?: string };
     if (!runId) {
       const { sandboxId } = result as { sandboxId: string };
-      return (
-        <div key={toolCallId} className="rounded-xl border border-border bg-card p-4 max-w-2xl shadow-sm">
-          <p className="text-sm text-muted-foreground">
-            Sandbox <span className="font-mono">{sandboxId}</span> created (no command executed).
-          </p>
-        </div>
-      );
+      return <SandboxCreatedResult key={toolCallId} sandboxId={sandboxId} />;
     }
     return (
       <div key={toolCallId}>
