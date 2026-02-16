@@ -126,12 +126,11 @@ import GetChatsSkeleton from "./tools/chats/GetChatsSkeleton";
 import GetChatsResult, {
   GetChatsResultType,
 } from "./tools/chats/GetChatsResult";
-import type { TaskRunStatus } from "@/lib/tasks/getTaskRunStatus";
 import RunPageSkeleton from "@/components/TasksPage/Run/RunPageSkeleton";
-import RunDetails from "@/components/TasksPage/Run/RunDetails";
 import RunSandboxCommandResult, {
   RunSandboxCommandResultData,
 } from "./tools/sandbox/RunSandboxCommandResult";
+import RunSandboxCommandResultWithPolling from "./tools/sandbox/RunSandboxCommandResultWithPolling";
 
 type CallToolResult = {
   content: TextContent[];
@@ -608,9 +607,13 @@ export function getToolResultComponent(part: ToolUIPart | DynamicToolUIPart) {
     );
   } else if (toolName === "get_task_run_status") {
     const toolInput = (part as DynamicToolUIPart).input as { runId?: string } | undefined;
+    const runId = toolInput?.runId;
+    if (!runId) {
+      return <GenericSuccess key={toolCallId} name="Get Task Run Status" message="No run ID provided." />;
+    }
     return (
       <div key={toolCallId}>
-        <RunDetails runId={toolInput?.runId ?? "unknown"} data={result as TaskRunStatus} />
+        <RunSandboxCommandResultWithPolling runId={runId} />
       </div>
     );
   }
