@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Loader, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -16,6 +17,7 @@ export default function SandboxCreateSection({
 }: SandboxCreateSectionProps) {
   const [prompt, setPrompt] = useState("");
   const { createSandbox, isCreating } = useCreateSandbox();
+  const { push } = useRouter();
 
   const handleCreateSandbox = async () => {
     if (!prompt.trim()) {
@@ -24,10 +26,15 @@ export default function SandboxCreateSection({
     }
 
     try {
-      await createSandbox(prompt);
-      toast.success("Sandbox created successfully");
-      setPrompt("");
-      onSuccess();
+      const sandboxes = await createSandbox(prompt);
+      const runId = sandboxes[0]?.runId;
+      if (runId) {
+        push(`/tasks/${runId}`);
+      } else {
+        toast.success("Sandbox created successfully");
+        setPrompt("");
+        onSuccess();
+      }
     } catch {
       // Error is handled by the hook
     }
