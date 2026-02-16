@@ -15,10 +15,6 @@ export const getDisplayToolName = (name: string) => {
       return "Get Tool Details";
     case "COMPOSIO_MULTI_EXECUTE_TOOL":
       return "Execute Action";
-    case "run_sandbox_command":
-      return "Run Sandbox Command";
-    case "get_task_run_status":
-      return "Get Task Run Status";
     default:
       return cleanName
         .split("_")
