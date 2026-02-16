@@ -126,6 +126,9 @@ import GetChatsSkeleton from "./tools/chats/GetChatsSkeleton";
 import GetChatsResult, {
   GetChatsResultType,
 } from "./tools/chats/GetChatsResult";
+import RunPageSkeleton from "@/components/TasksPage/Run/RunPageSkeleton";
+import SandboxCreatedResult from "./tools/sandbox/SandboxCreatedResult";
+import RunSandboxCommandResultWithPolling from "./tools/sandbox/RunSandboxCommandResultWithPolling";
 
 type CallToolResult = {
   content: TextContent[];
@@ -309,6 +312,12 @@ export function getToolCallComponent(part: ToolUIPart) {
     return (
       <div key={toolCallId}>
         <GetChatsSkeleton />
+      </div>
+    );
+  } else if (toolName === "run_sandbox_command" || toolName === "get_task_run_status") {
+    return (
+      <div key={toolCallId}>
+        <RunPageSkeleton />
       </div>
     );
   }
@@ -586,6 +595,24 @@ export function getToolResultComponent(part: ToolUIPart | DynamicToolUIPart) {
     return (
       <div key={toolCallId}>
         <GetChatsResult result={result as GetChatsResultType} />
+      </div>
+    );
+  } else if (toolName === "run_sandbox_command") {
+    const { runId } = result as { runId?: string };
+    if (!runId) {
+      const { sandboxId } = result as { sandboxId: string };
+      return <SandboxCreatedResult key={toolCallId} sandboxId={sandboxId} />;
+    }
+    return (
+      <div key={toolCallId}>
+        <RunSandboxCommandResultWithPolling runId={runId} />
+      </div>
+    );
+  } else if (toolName === "get_task_run_status") {
+    const { runId } = (part as DynamicToolUIPart).input as { runId: string };
+    return (
+      <div key={toolCallId}>
+        <RunSandboxCommandResultWithPolling runId={runId} />
       </div>
     );
   }
