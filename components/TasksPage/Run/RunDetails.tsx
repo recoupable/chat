@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Loader2, CheckCircle2, XCircle } from "lucide-react";
 import type { TaskRunStatus } from "@/lib/tasks/getTaskRunStatus";
 import RunLogsList from "./RunLogsList";
@@ -38,7 +39,9 @@ export default function RunDetails({ runId, data }: RunDetailsProps) {
       <div className="flex items-center gap-3">
         {config.icon}
         <div>
-          <h1 className="text-lg font-semibold">{data.taskIdentifier}</h1>
+          <Link href={`/tasks/${runId}`} className="text-lg font-semibold hover:underline">
+            {data.taskIdentifier}
+          </Link>
           <p className={`text-sm ${config.color}`}>{config.label}</p>
         </div>
       </div>
