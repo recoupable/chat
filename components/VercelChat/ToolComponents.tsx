@@ -606,11 +606,7 @@ export function getToolResultComponent(part: ToolUIPart | DynamicToolUIPart) {
       </div>
     );
   } else if (toolName === "get_task_run_status") {
-    const toolInput = (part as DynamicToolUIPart).input as { runId?: string } | undefined;
-    const runId = toolInput?.runId;
-    if (!runId) {
-      return <GenericSuccess key={toolCallId} name="Get Task Run Status" message="No run ID provided." />;
-    }
+    const { runId } = (part as DynamicToolUIPart).input as { runId: string };
     return (
       <div key={toolCallId}>
         <RunSandboxCommandResultWithPolling runId={runId} />
