@@ -2,7 +2,7 @@
 
 import RunSandboxCommandResultWithPolling from "./RunSandboxCommandResultWithPolling";
 
-interface RunSandboxCommandResultData {
+export interface RunSandboxCommandResultData {
   sandboxId: string;
   sandboxStatus: string;
   timeout: number;

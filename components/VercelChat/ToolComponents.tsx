@@ -129,7 +129,9 @@ import GetChatsResult, {
 import type { TaskRunStatus } from "@/lib/tasks/getTaskRunStatus";
 import RunPageSkeleton from "@/components/TasksPage/Run/RunPageSkeleton";
 import RunDetails from "@/components/TasksPage/Run/RunDetails";
-import RunSandboxCommandResult from "./tools/sandbox/RunSandboxCommandResult";
+import RunSandboxCommandResult, {
+  RunSandboxCommandResultData,
+} from "./tools/sandbox/RunSandboxCommandResult";
 
 type CallToolResult = {
   content: TextContent[];
@@ -601,7 +603,7 @@ export function getToolResultComponent(part: ToolUIPart | DynamicToolUIPart) {
   } else if (toolName === "run_sandbox_command") {
     return (
       <div key={toolCallId}>
-        <RunSandboxCommandResult result={result as { sandboxId: string; sandboxStatus: string; timeout: number; createdAt: string; runId?: string }} />
+        <RunSandboxCommandResult result={result as RunSandboxCommandResultData} />
       </div>
     );
   } else if (toolName === "get_task_run_status") {
