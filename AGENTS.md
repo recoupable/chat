@@ -1,6 +1,6 @@
 # Agent Instructions
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to coding agents like Claude Code (claude.ai/code) and OpenCode when working with code in this repository.
 
 ## Git Workflow
 
