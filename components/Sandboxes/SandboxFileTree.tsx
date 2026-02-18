@@ -32,7 +32,11 @@ export default function SandboxFileTree() {
   }
 
   if (filetree.length === 0) {
-    return null;
+    return (
+      <div className="w-full max-w-md">
+        <p className="text-sm text-muted-foreground">No files yet.</p>
+      </div>
+    );
   }
 
   return (
