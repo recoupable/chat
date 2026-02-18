@@ -1,16 +1,36 @@
 "use client";
 
 import { FileTree } from "@/components/ai-elements/file-tree";
-import type { FileNode } from "@/lib/sandboxes/parseFileTree";
 import FileNodeComponent from "./FileNodeComponent";
+import useSandboxes from "@/hooks/useSandboxes";
+import { Loader } from "lucide-react";
 
-interface SandboxFileTreeProps {
-  filetree: FileNode[];
-}
+export default function SandboxFileTree() {
+  const { filetree, isLoading, error, refetch } = useSandboxes();
 
-export default function SandboxFileTree({
-  filetree,
-}: SandboxFileTreeProps) {
+  if (isLoading) {
+    return (
+      <div className="flex items-center gap-2 text-muted-foreground">
+        <Loader className="h-4 w-4 animate-spin" />
+        <span>Loading files...</span>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-destructive">
+        <p>Failed to load files</p>
+        <button
+          onClick={() => refetch()}
+          className="text-sm underline hover:no-underline"
+        >
+          Try again
+        </button>
+      </div>
+    );
+  }
+
   if (filetree.length === 0) {
     return null;
   }

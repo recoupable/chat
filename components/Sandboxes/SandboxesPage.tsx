@@ -19,6 +19,7 @@ export default function SandboxesPage() {
         )}
       </div>
       <SandboxCreateSection />
+      <SandboxFileTree />
       {isLoading ? (
         <div className="flex items-center gap-2 text-muted-foreground">
           <Loader className="h-4 w-4 animate-spin" />
@@ -35,10 +36,7 @@ export default function SandboxesPage() {
           </button>
         </div>
       ) : (
-        <>
-          <SandboxFileTree filetree={filetree} />
-          <SandboxList sandboxes={sandboxes} />
-        </>
+        <SandboxList sandboxes={sandboxes} />
       )}
     </div>
   );
