@@ -2,11 +2,14 @@
 
 import { FileTree } from "@/components/ai-elements/file-tree";
 import FileNodeComponent from "./FileNodeComponent";
+import SandboxFilePreview from "./SandboxFilePreview";
 import useSandboxes from "@/hooks/useSandboxes";
+import useSandboxFileContent from "@/hooks/useSandboxFileContent";
 import { Loader } from "lucide-react";
 
 export default function SandboxFileTree() {
   const { filetree, isLoading, error, refetch } = useSandboxes();
+  const fileContent = useSandboxFileContent();
 
   if (isLoading) {
     return (
@@ -40,13 +43,23 @@ export default function SandboxFileTree() {
   }
 
   return (
-    <div className="w-full max-w-md">
-      <h2 className="mb-2 text-lg font-medium">Repository Files</h2>
-      <FileTree>
-        {filetree.map((node) => (
-          <FileNodeComponent key={node.path} node={node} />
-        ))}
-      </FileTree>
+    <div className="flex w-full gap-4">
+      <div className="w-full max-w-md shrink-0">
+        <h2 className="mb-2 text-lg font-medium">Repository Files</h2>
+        <FileTree selectedPath={fileContent.selectedPath} onSelect={fileContent.select}>
+          {filetree.map((node) => (
+            <FileNodeComponent key={node.path} node={node} />
+          ))}
+        </FileTree>
+      </div>
+      {fileContent.selectedPath && (
+        <SandboxFilePreview
+          selectedPath={fileContent.selectedPath}
+          content={fileContent.content}
+          loading={fileContent.loading}
+          error={fileContent.error}
+        />
+      )}
     </div>
   );
 }

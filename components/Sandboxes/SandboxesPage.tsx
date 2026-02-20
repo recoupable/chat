@@ -10,7 +10,7 @@ export default function SandboxesPage() {
   const { sandboxes, filetree, isLoading, error, refetch } = useSandboxes();
 
   return (
-    <div className="flex h-screen flex-col items-center justify-center gap-6 p-4">
+    <div className="flex min-h-screen flex-col items-center gap-6 p-4 pt-12">
       <div className="flex items-center gap-3">
         <h1 className="text-2xl font-semibold">Sandboxes</h1>
         {(sandboxes.length > 0 || filetree.length > 0) && (
