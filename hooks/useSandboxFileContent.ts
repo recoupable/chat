@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { usePrivy } from "@privy-io/react-auth";
 import { getFileContents } from "@/lib/sandboxes/getFileContents";
 
@@ -12,42 +13,31 @@ interface UseSandboxFileContentReturn {
 
 export default function useSandboxFileContent(): UseSandboxFileContentReturn {
   const { getAccessToken } = usePrivy();
-
   const [selectedPath, setSelectedPath] = useState<string>();
-  const [content, setContent] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  const fetchFile = useCallback(
-    async (path: string) => {
-      setSelectedPath(path);
-      setContent(null);
-      setError(null);
-      setLoading(true);
-
-      try {
-        const accessToken = await getAccessToken();
-        if (!accessToken) {
-          setError("Please sign in to view file contents");
-          return;
-        }
-        const result = await getFileContents(accessToken, path);
-        setContent(result.content);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load file");
-      } finally {
-        setLoading(false);
+  const mutation = useMutation({
+    mutationFn: async (path: string) => {
+      const accessToken = await getAccessToken();
+      if (!accessToken) {
+        throw new Error("Please sign in to view file contents");
       }
+      return getFileContents(accessToken, path);
     },
-    [getAccessToken],
-  );
+  });
 
   const select = useCallback(
     (path: string) => {
-      void fetchFile(path);
+      setSelectedPath(path);
+      mutation.mutate(path);
     },
-    [fetchFile],
+    [mutation],
   );
 
-  return { selectedPath, content, loading, error, select };
+  return {
+    selectedPath,
+    content: mutation.data?.content ?? null,
+    loading: mutation.isPending,
+    error: mutation.error?.message ?? null,
+    select,
+  };
 }
