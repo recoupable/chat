@@ -19,7 +19,7 @@ export default function SandboxFileTree() {
   const [fileLoading, setFileLoading] = useState(false);
   const [fileError, setFileError] = useState<string | null>(null);
 
-  const handleSelect = useCallback(
+  const fetchFile = useCallback(
     async (path: string) => {
       setSelectedPath(path);
       setFileContent(null);
@@ -41,6 +41,13 @@ export default function SandboxFileTree() {
       }
     },
     [getAccessToken],
+  );
+
+  const handleSelect = useCallback(
+    (path: string) => {
+      void fetchFile(path);
+    },
+    [fetchFile],
   );
 
   if (isLoading) {
