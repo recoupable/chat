@@ -27,8 +27,7 @@ export async function createSandbox(
       Authorization: `Bearer ${accessToken}`,
     },
     body: JSON.stringify({
-      command: "opencode",
-      args: ["run", fullPrompt],
+      prompt: fullPrompt,
     }),
   });
 
