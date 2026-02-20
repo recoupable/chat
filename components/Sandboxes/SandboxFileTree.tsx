@@ -43,8 +43,8 @@ export default function SandboxFileTree() {
   }
 
   return (
-    <div className="flex w-full gap-4">
-      <div className="w-full max-w-md shrink-0">
+    <div className="flex w-full flex-col gap-4 lg:flex-row">
+      <div className="w-full lg:max-w-md lg:shrink-0">
         <h2 className="mb-2 text-lg font-medium">Repository Files</h2>
         <FileTree selectedPath={fileContent.selectedPath} onSelect={fileContent.select}>
           {filetree.map((node) => (
