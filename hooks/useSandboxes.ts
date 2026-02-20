@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { usePrivy } from "@privy-io/react-auth";
 import { getSandboxes } from "@/lib/sandboxes/getSandboxes";
 import { convertFileTreeEntries } from "@/lib/sandboxes/convertFileTreeEntries";
+import getSubtreeAtPath from "@/lib/sandboxes/getSubtreeAtPath";
 import type { Sandbox } from "@/lib/sandboxes/createSandbox";
 import type { FileNode } from "@/lib/sandboxes/parseFileTree";
 
@@ -29,13 +30,11 @@ export default function useSandboxes(): UseSandboxesReturn {
     enabled: authenticated,
   });
 
-  const filetree = useMemo(
-    () =>
-      query.data?.filetree
-        ? convertFileTreeEntries(query.data.filetree)
-        : [],
-    [query.data?.filetree]
-  );
+  const filetree = useMemo(() => {
+    if (!query.data?.filetree) return [];
+    const tree = convertFileTreeEntries(query.data.filetree);
+    return getSubtreeAtPath(tree);
+  }, [query.data?.filetree]);
 
   return {
     sandboxes: query.data?.sandboxes || [],
