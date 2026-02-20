@@ -1,7 +1,6 @@
 "use client";
 
 import { Loader } from "lucide-react";
-import SandboxCreateSection from "@/components/Sandboxes/SandboxCreateSection";
 import SandboxDeleteButton from "@/components/Sandboxes/SandboxDeleteButton";
 import SandboxList from "@/components/Sandboxes/SandboxList";
 import SandboxFileTree from "@/components/Sandboxes/SandboxFileTree";
@@ -18,7 +17,6 @@ export default function SandboxesPage() {
           <SandboxDeleteButton onSuccess={refetch} />
         )}
       </div>
-      <SandboxCreateSection />
       <SandboxFileTree />
       {isLoading ? (
         <div className="flex items-center gap-2 text-muted-foreground">
