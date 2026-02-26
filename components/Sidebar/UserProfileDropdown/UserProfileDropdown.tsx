@@ -51,7 +51,7 @@ const UserProfileDropdown = () => {
       {/* User identity block — avatar + name + badge + email + credits */}
       <div className="flex gap-3 px-3 pt-3 pb-2">
         <Avatar className="h-10 w-10 shrink-0">
-          <AvatarImage src={userImage!} alt={userName} />
+          <AvatarImage src={userImage} alt={userName} />
           <AvatarFallback className="text-xs">{avatarInitials}</AvatarFallback>
         </Avatar>
         <div className="min-w-0 flex-1 space-y-0.5">
