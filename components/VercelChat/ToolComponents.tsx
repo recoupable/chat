@@ -130,7 +130,7 @@ import RunPageSkeleton from "@/components/TasksPage/Run/RunPageSkeleton";
 import SandboxCreatedResult from "./tools/sandbox/SandboxCreatedResult";
 import RunSandboxCommandResultWithPolling from "./tools/sandbox/RunSandboxCommandResultWithPolling";
 import PromptSandboxStreamProgress from "./tools/sandbox/PromptSandboxStreamProgress";
-import { isSandboxStreamProgress } from "@/lib/sandboxes/sandboxStreamTypes";
+import type { SandboxStreamProgress } from "@/lib/sandboxes/sandboxStreamTypes";
 
 type CallToolResult = {
   content: TextContent[];
@@ -624,22 +624,10 @@ export function getToolResultComponent(part: ToolUIPart | DynamicToolUIPart) {
       </div>
     );
   } else if (toolName === "prompt_sandbox") {
-    if (isSandboxStreamProgress(result)) {
-      return (
-        <div key={toolCallId}>
-          <PromptSandboxStreamProgress progress={result} />
-        </div>
-      );
-    }
     return (
-      <GenericSuccess
-        key={toolCallId}
-        name={getDisplayToolName(toolName)}
-        message={
-          (result as { message?: string }).message ??
-          getToolInfo(toolName).message
-        }
-      />
+      <div key={toolCallId}>
+        <PromptSandboxStreamProgress progress={result as SandboxStreamProgress} />
+      </div>
     );
   }
 
