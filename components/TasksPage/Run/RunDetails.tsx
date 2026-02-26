@@ -4,18 +4,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Loader2, CheckCircle2, XCircle, Clock, Ban, AlertTriangle } from "lucide-react";
 import type { TaskRunStatus } from "@/lib/tasks/getTaskRunStatus";
+import type { StatusConfigEntry } from "./types";
 import RunLogsList from "./RunLogsList";
 import AccountIdDisplay from "@/components/ArtistSetting/AccountIdDisplay";
 
 interface RunDetailsProps {
   runId: string;
   data: TaskRunStatus;
-}
-
-interface StatusConfigEntry {
-  icon: React.ReactNode;
-  label: string;
-  color: string;
 }
 
 const ERROR_STATUSES = new Set([
