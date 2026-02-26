@@ -8,7 +8,7 @@ export interface TaskRunMetadata {
 
 export interface TaskRunStatus {
   status: string;
-  data?: unknown;
+  output?: unknown;
   error?: { message: string; name?: string; stackTrace?: string } | null;
   metadata: TaskRunMetadata | null;
   taskIdentifier: string;
@@ -46,5 +46,15 @@ export async function getTaskRunStatus(
     throw new Error("Task run not found");
   }
 
-  return run as TaskRunStatus;
+  return {
+    status: run.status,
+    output: run.output ?? undefined,
+    error: run.error ?? null,
+    metadata: run.metadata ?? null,
+    taskIdentifier: run.taskIdentifier,
+    createdAt: run.createdAt,
+    startedAt: run.startedAt ?? null,
+    finishedAt: run.finishedAt ?? null,
+    durationMs: run.durationMs ?? null,
+  } as TaskRunStatus;
 }
