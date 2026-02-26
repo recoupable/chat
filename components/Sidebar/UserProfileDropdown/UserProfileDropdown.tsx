@@ -32,7 +32,7 @@ const UserProfileDropdown = () => {
   const { theme, setTheme } = useTheme();
 
   const userName = userData?.name || email || userData?.wallet || "";
-  const userImage = userData?.image;
+  const userImage = userData?.image ?? undefined;
   const avatarInitials = userName
     .split(" ")
     .map((part: string) => part.charAt(0))
