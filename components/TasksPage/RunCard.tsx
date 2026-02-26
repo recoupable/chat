@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 import type { TaskRunItem } from "@/lib/tasks/getTaskRuns";
 
@@ -82,7 +83,7 @@ const RunCard: React.FC<RunCardProps> = ({ run }) => {
   const duration = formatDuration(run.durationMs);
 
   return (
-    <div className="group flex items-center justify-between py-4 px-4 hover:bg-muted dark:hover:bg-[#1a1a1a] transition-colors -mx-4">
+    <Link href={`/tasks/${run.id}`} className="group flex items-center justify-between py-4 px-4 hover:bg-muted dark:hover:bg-[#1a1a1a] transition-colors -mx-4 cursor-pointer">
       <div className="flex items-center space-x-4">
         <div>
           <h4 className="text-base font-medium text-foreground">
@@ -105,7 +106,7 @@ const RunCard: React.FC<RunCardProps> = ({ run }) => {
           {getStatusLabel(run.status)}
         </span>
       </div>
-    </div>
+    </Link>
   );
 };
 
