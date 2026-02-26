@@ -3,45 +3,9 @@ import { cn } from "@/lib/utils";
 import type { TaskRunItem } from "@/lib/tasks/getTaskRuns";
 import { getTaskDisplayName } from "@/lib/tasks/getTaskDisplayName";
 import { getStatusColor } from "@/lib/tasks/getStatusColor";
-
-const STATUS_LABELS: Record<string, string> = {
-  COMPLETED: "Completed",
-  FAILED: "Failed",
-  CRASHED: "Crashed",
-  CANCELED: "Canceled",
-  SYSTEM_FAILURE: "System Failure",
-  INTERRUPTED: "Interrupted",
-  EXECUTING: "Executing",
-  REATTEMPTING: "Reattempting",
-  QUEUED: "Queued",
-  DELAYED: "Delayed",
-  FROZEN: "Frozen",
-  PENDING_VERSION: "Pending Version",
-};
-
-function getStatusLabel(status: string): string {
-  return STATUS_LABELS[status] ?? status;
-}
-
-function formatDuration(durationMs: number | null): string {
-  if (durationMs === null) return "";
-  if (durationMs < 1000) return `${durationMs}ms`;
-  const seconds = Math.round(durationMs / 1000);
-  if (seconds < 60) return `${seconds}s`;
-  const minutes = Math.floor(seconds / 60);
-  const remainingSeconds = seconds % 60;
-  return `${minutes}m ${remainingSeconds}s`;
-}
-
-function formatTimestamp(dateStr: string): string {
-  const date = new Date(dateStr);
-  return date.toLocaleString(undefined, {
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  });
-}
+import { getStatusLabel } from "@/lib/tasks/getStatusLabel";
+import { formatDuration } from "@/lib/tasks/formatDuration";
+import { formatTimestamp } from "@/lib/tasks/formatTimestamp";
 
 interface RunCardProps {
   run: TaskRunItem;
