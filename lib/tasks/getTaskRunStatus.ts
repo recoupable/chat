@@ -7,9 +7,9 @@ export interface TaskRunMetadata {
 }
 
 export interface TaskRunStatus {
-  status: "pending" | "complete" | "failed";
+  status: string;
   data?: unknown;
-  error?: string;
+  error?: { message: string; name?: string; stackTrace?: string } | null;
   metadata: TaskRunMetadata | null;
   taskIdentifier: string;
   createdAt: string;
@@ -41,5 +41,10 @@ export async function getTaskRunStatus(
     throw new Error(data.error || "Failed to fetch task run status");
   }
 
-  return data as TaskRunStatus;
+  const run = data.runs?.[0];
+  if (!run) {
+    throw new Error("Task run not found");
+  }
+
+  return run as TaskRunStatus;
 }
