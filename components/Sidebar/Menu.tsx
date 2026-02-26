@@ -14,9 +14,15 @@ import FilesNavItem from "./FilesNavItem";
 import { useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
-import { SquarePen } from "lucide-react";
+import { SquarePen, PanelLeftClose, PanelLeft } from "lucide-react";
 
-const Menu = ({ isExpanded }: { isExpanded: boolean }) => {
+interface MenuProps {
+  isExpanded: boolean;
+  isPinned?: boolean;
+  onTogglePin?: () => void;
+}
+
+const Menu = ({ isExpanded, isPinned = false, onTogglePin }: MenuProps) => {
   const { push, prefetch } = useRouter();
   const pathname = usePathname();
   const { email, isPrepared } = useUserProvider();
@@ -37,32 +43,49 @@ const Menu = ({ isExpanded }: { isExpanded: boolean }) => {
   }, [prefetch]);
 
   return (
-    <div className="w-full h-screen pt-3 pb-2 px-2 hidden md:flex flex-col">
-      {/* Logo */}
-      <Link
-        href="/"
-        className={cn(
-          "shrink-0 hover:opacity-80 transition-all duration-200",
-          isExpanded ? "pl-[7px]" : "self-center"
+    <div className="w-full h-screen pt-5 pb-2 px-2 hidden md:flex flex-col">
+      {/* Logo row — logo left, toggle button right */}
+      <div className={cn(
+        "flex items-center shrink-0",
+        isExpanded ? "justify-between px-3" : "justify-center"
+      )}>
+        <Link
+          href="/"
+          className="hover:opacity-80 transition-opacity duration-200"
+          aria-label="Home"
+        >
+          <Logo isExpanded={isExpanded} />
+        </Link>
+        {/* Sidebar pin/collapse toggle — only visible when expanded */}
+        {isExpanded && onTogglePin && (
+          <button
+            type="button"
+            onClick={onTogglePin}
+            className="p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            aria-label={isPinned ? "Collapse sidebar" : "Pin sidebar open"}
+          >
+            {isPinned ? (
+              <PanelLeftClose className="size-4" />
+            ) : (
+              <PanelLeft className="size-4" />
+            )}
+          </button>
         )}
-        aria-label="Home"
-      >
-        <Logo isExpanded={isExpanded} />
-      </Link>
+      </div>
 
-      {/* Navigation Section */}
-      <div className="flex flex-col gap-0.5 w-full mt-2">
+      {/* Primary action — New Chat */}
+      <div className="flex flex-col gap-1 w-full mt-4">
         <button
           type="button"
           className={cn(
-            "inline-flex items-center h-8 rounded-lg whitespace-nowrap overflow-hidden transition-all duration-200 text-sm font-normal text-foreground hover:bg-muted",
-            isExpanded ? "w-full justify-start gap-2 px-3" : "w-8 justify-center mx-auto gap-0"
+            "inline-flex items-center h-10 rounded-lg whitespace-nowrap overflow-hidden transition-all duration-200 text-sm font-normal text-foreground hover:bg-muted",
+            isExpanded ? "w-full justify-start gap-2 px-3" : "w-10 justify-center mx-auto gap-0"
           )}
           onClick={() => goToItem("chat")}
           aria-label={email ? "New Chat" : "Sign In"}
         >
           <div className="w-[21px] flex justify-center items-center shrink-0">
-            <SquarePen className="size-4" />
+            <SquarePen className="size-[18px]" />
           </div>
           <span className={cn(
             "overflow-hidden transition-all duration-200",
@@ -71,6 +94,10 @@ const Menu = ({ isExpanded }: { isExpanded: boolean }) => {
             {email ? "New Chat" : "Sign In"}
           </span>
         </button>
+      </div>
+
+      {/* Secondary navigation — separated from primary action */}
+      <div className="flex flex-col gap-1 w-full mt-3">
         <AgentsNavItem
           isActive={isAgents}
           isExpanded={isExpanded}
@@ -93,7 +120,21 @@ const Menu = ({ isExpanded }: { isExpanded: boolean }) => {
         />
       </div>
 
-      {/* Recent Chats & Unlock Pro — smoothly fade in/out */}
+      {/* Divider between nav and chats */}
+      <AnimatePresence>
+        {isExpanded && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15, exit: { duration: 0.05 } }}
+          >
+            <div className="mx-3 mt-4 border-t border-border" />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Recent Chats — smoothly fade in/out */}
       <AnimatePresence>
         {isExpanded && (
           <motion.div
