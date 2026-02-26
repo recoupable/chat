@@ -1,18 +1,7 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import type { TaskRunItem } from "@/lib/tasks/getTaskRuns";
-
-const TASK_NAME_MAP: Record<string, string> = {
-  "run-sandbox-command": "Sandbox Command",
-  "customer-prompt-task": "Scheduled Prompt",
-  "setup-sandbox": "Setup Sandbox",
-  "send-pulses": "Send Pulses",
-  "pro-artist-social-profiles-scrape": "Social Scrape",
-};
-
-function getTaskDisplayName(taskIdentifier: string): string {
-  return TASK_NAME_MAP[taskIdentifier] ?? taskIdentifier;
-}
+import { getTaskDisplayName } from "./getTaskDisplayName";
 
 const SUCCESS_STATUSES = new Set(["COMPLETED"]);
 const ERROR_STATUSES = new Set([
