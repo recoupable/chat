@@ -9,7 +9,7 @@ export interface TaskRunMetadata {
 export interface TaskRunStatus {
   status: string;
   data?: unknown;
-  error?: string;
+  error?: { message: string; name?: string; stackTrace?: string } | null;
   metadata: TaskRunMetadata | null;
   taskIdentifier: string;
   createdAt: string;

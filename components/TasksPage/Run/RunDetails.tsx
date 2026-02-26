@@ -54,7 +54,7 @@ export default function RunDetails({ runId, data }: RunDetailsProps) {
       {ERROR_STATUSES.has(data.status) && data.error && (
         <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 dark:border-red-900 dark:bg-red-950">
           <p className="text-sm font-medium text-red-800 dark:text-red-200">
-            {data.error}
+            {data.error?.message}
           </p>
         </div>
       )}
