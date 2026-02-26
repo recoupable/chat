@@ -2,13 +2,15 @@ import { NEW_API_BASE_URL } from "@/lib/consts";
 
 export interface TaskRunItem {
   id: string;
-  status: string;
+  status: "pending" | "complete" | "failed";
+  data?: unknown;
+  error?: string;
+  metadata?: Record<string, unknown> | null;
   taskIdentifier: string;
   createdAt: string;
   startedAt: string | null;
   finishedAt: string | null;
   durationMs: number | null;
-  tags: string[];
 }
 
 interface TaskRunListResponse {

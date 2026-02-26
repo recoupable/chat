@@ -13,27 +13,25 @@ function getTaskDisplayName(taskIdentifier: string): string {
   return TASK_NAME_MAP[taskIdentifier] ?? taskIdentifier;
 }
 
-function getStatusColor(status: string): string {
+function getStatusColor(status: TaskRunItem["status"]): string {
   switch (status) {
-    case "COMPLETED":
+    case "complete":
       return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400";
-    case "FAILED":
-    case "CRASHED":
-    case "SYSTEM_FAILURE":
-    case "TIMED_OUT":
+    case "failed":
       return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400";
-    case "EXECUTING":
-    case "QUEUED":
-    case "REATTEMPTING":
-    case "PENDING":
-    case "WAITING_FOR_DEPLOY":
+    case "pending":
       return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400";
-    case "CANCELED":
-    case "INTERRUPTED":
-    case "EXPIRED":
-      return "bg-gray-100 text-gray-800 dark:bg-gray-800/50 dark:text-gray-400";
-    default:
-      return "bg-gray-100 text-gray-800 dark:bg-gray-800/50 dark:text-gray-400";
+  }
+}
+
+function getStatusLabel(status: TaskRunItem["status"]): string {
+  switch (status) {
+    case "complete":
+      return "Complete";
+    case "failed":
+      return "Failed";
+    case "pending":
+      return "Pending";
   }
 }
 
@@ -85,7 +83,7 @@ const RunCard: React.FC<RunCardProps> = ({ run }) => {
             getStatusColor(run.status),
           )}
         >
-          {run.status.charAt(0) + run.status.slice(1).toLowerCase()}
+          {getStatusLabel(run.status)}
         </span>
       </div>
     </div>
