@@ -1,6 +1,7 @@
-import React, { useRef, useEffect } from "react";
+import React from "react";
 import { Loader, CheckCircle, XCircle } from "lucide-react";
 import type { SandboxStreamProgress } from "@/lib/sandboxes/sandboxStreamTypes";
+import { useAutoScroll } from "@/hooks/useAutoScroll";
 
 interface PromptSandboxStreamProgressProps {
   progress: SandboxStreamProgress;
@@ -9,13 +10,7 @@ interface PromptSandboxStreamProgressProps {
 const PromptSandboxStreamProgress: React.FC<
   PromptSandboxStreamProgressProps
 > = ({ progress }) => {
-  const preRef = useRef<HTMLPreElement>(null);
-
-  useEffect(() => {
-    if (preRef.current) {
-      preRef.current.scrollTop = preRef.current.scrollHeight;
-    }
-  }, [progress.output]);
+  const preRef = useAutoScroll<HTMLPreElement>(progress.output);
 
   if (progress.status === "booting") {
     return (
