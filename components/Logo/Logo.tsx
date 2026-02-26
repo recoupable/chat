@@ -31,7 +31,7 @@ const Logo = ({ isExpanded = false }: { isExpanded?: boolean }) => {
     )}>
       {/* Icon container — matches w-[21px] used by nav item icons */}
       <div className="w-[21px] flex justify-center items-center shrink-0">
-        <LogoIcon className="w-[18px] h-[18px] text-foreground" />
+        <LogoIcon className="w-[18px] h-auto text-foreground" />
       </div>
       {/* Brand name — fades in/out alongside sidebar */}
       <span className={cn(
