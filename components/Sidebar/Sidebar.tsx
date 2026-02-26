@@ -10,11 +10,8 @@ import useIsMobile from "@/hooks/useIsMobile";
 
 const Sidebar = () => {
   const [menuExpanded, setMenuExpanded] = useState(false);
-  const [isPinned, setIsPinned] = useState(false);
   const isMobile = useIsMobile();
-
-  const isOpen = isPinned || menuExpanded;
-  const animate = { width: isOpen ? 240 : 56 };
+  const animate = { width: menuExpanded ? 240 : 56 };
   const initial = { width: 56 };
 
   return (
@@ -23,14 +20,10 @@ const Sidebar = () => {
       animate={animate}
       initial={initial}
       transition={{ duration: 0.2 }}
-      onMouseEnter={() => { if (!isPinned) setMenuExpanded(!isMobile); }}
-      onMouseLeave={() => { if (!isPinned) setMenuExpanded(false); }}
+      onMouseEnter={() => setMenuExpanded(!isMobile)}
+      onMouseLeave={() => setMenuExpanded(false)}
     >
-      <Menu
-        isExpanded={isOpen}
-        isPinned={isPinned}
-        onTogglePin={() => setIsPinned((prev) => !prev)}
-      />
+      <Menu isExpanded={menuExpanded} />
       <AccountModal />
       <OrgSettingsModal />
       <CreateOrgModal />
