@@ -41,5 +41,10 @@ export async function getTaskRunStatus(
     throw new Error(data.error || "Failed to fetch task run status");
   }
 
-  return data as TaskRunStatus;
+  const run = data.runs?.[0];
+  if (!run) {
+    throw new Error("Task run not found");
+  }
+
+  return run as TaskRunStatus;
 }
