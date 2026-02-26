@@ -32,12 +32,9 @@ const OrgSelector = () => {
     <DropdownMenuSub>
       <DropdownMenuSubTrigger className="cursor-pointer">
         <Building2 className="h-4 w-4" />
-        <span className="truncate flex-1">
-          Organization
-        </span>
-        <span className="text-xs text-muted-foreground truncate max-w-[80px]">
+        <span className="truncate">
           {isLoading
-            ? "..."
+            ? "Loading..."
             : selectedOrg?.organization_name || "Personal"}
         </span>
       </DropdownMenuSubTrigger>
