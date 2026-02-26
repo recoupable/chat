@@ -125,9 +125,8 @@ const Menu = ({ isExpanded, isPinned = false, onTogglePin }: MenuProps) => {
         {isExpanded && (
           <motion.div
             initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.15, exit: { duration: 0.05 } }}
+            animate={{ opacity: 1, transition: { duration: 0.15 } }}
+            exit={{ opacity: 0, transition: { duration: 0.05 } }}
           >
             <div className="mx-3 mt-4 border-t border-border" />
           </motion.div>
@@ -140,9 +139,8 @@ const Menu = ({ isExpanded, isPinned = false, onTogglePin }: MenuProps) => {
           <motion.div
             className="flex flex-col flex-grow min-h-0 overflow-hidden"
             initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.15, exit: { duration: 0.05 } }}
+            animate={{ opacity: 1, transition: { duration: 0.15 } }}
+            exit={{ opacity: 0, transition: { duration: 0.05 } }}
           >
             {!email ? (
               <RecentChatsSectionSkeleton />
