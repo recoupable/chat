@@ -2,7 +2,7 @@ import { NEW_API_BASE_URL } from "@/lib/consts";
 
 export interface TaskRunItem {
   id: string;
-  status: "pending" | "complete" | "failed";
+  status: string;
   data?: unknown;
   error?: string;
   metadata?: Record<string, unknown> | null;

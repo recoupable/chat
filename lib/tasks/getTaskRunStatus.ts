@@ -7,7 +7,7 @@ export interface TaskRunMetadata {
 }
 
 export interface TaskRunStatus {
-  status: "pending" | "complete" | "failed";
+  status: string;
   data?: unknown;
   error?: string;
   metadata: TaskRunMetadata | null;

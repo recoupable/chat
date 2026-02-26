@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Loader2, CheckCircle2, XCircle } from "lucide-react";
+import { Loader2, CheckCircle2, XCircle, Clock, Ban, AlertTriangle } from "lucide-react";
 import type { TaskRunStatus } from "@/lib/tasks/getTaskRunStatus";
 import RunLogsList from "./RunLogsList";
 import AccountIdDisplay from "@/components/ArtistSetting/AccountIdDisplay";
@@ -12,26 +12,112 @@ interface RunDetailsProps {
   data: TaskRunStatus;
 }
 
-const STATUS_CONFIG = {
-  pending: {
-    icon: <Loader2 className="size-5 animate-spin text-blue-500" />,
-    label: "Running",
-    color: "text-blue-500",
-  },
-  complete: {
+interface StatusConfigEntry {
+  icon: React.ReactNode;
+  label: string;
+  color: string;
+}
+
+const ERROR_STATUSES = new Set([
+  "FAILED",
+  "CRASHED",
+  "SYSTEM_FAILURE",
+  "TIMED_OUT",
+  "EXPIRED",
+  "INTERRUPTED",
+]);
+
+const STATUS_CONFIG: Record<string, StatusConfigEntry> = {
+  COMPLETED: {
     icon: <CheckCircle2 className="size-5 text-green-500" />,
-    label: "Complete",
+    label: "Completed",
     color: "text-green-500",
   },
-  failed: {
+  FAILED: {
     icon: <XCircle className="size-5 text-red-500" />,
     label: "Failed",
     color: "text-red-500",
   },
-} as const;
+  CRASHED: {
+    icon: <XCircle className="size-5 text-red-500" />,
+    label: "Crashed",
+    color: "text-red-500",
+  },
+  SYSTEM_FAILURE: {
+    icon: <AlertTriangle className="size-5 text-red-500" />,
+    label: "System Failure",
+    color: "text-red-500",
+  },
+  TIMED_OUT: {
+    icon: <XCircle className="size-5 text-red-500" />,
+    label: "Timed Out",
+    color: "text-red-500",
+  },
+  EXPIRED: {
+    icon: <XCircle className="size-5 text-red-500" />,
+    label: "Expired",
+    color: "text-red-500",
+  },
+  INTERRUPTED: {
+    icon: <XCircle className="size-5 text-red-500" />,
+    label: "Interrupted",
+    color: "text-red-500",
+  },
+  CANCELED: {
+    icon: <Ban className="size-5 text-gray-500" />,
+    label: "Canceled",
+    color: "text-gray-500",
+  },
+  EXECUTING: {
+    icon: <Loader2 className="size-5 animate-spin text-yellow-500" />,
+    label: "Executing",
+    color: "text-yellow-500",
+  },
+  DEQUEUED: {
+    icon: <Loader2 className="size-5 animate-spin text-yellow-500" />,
+    label: "Dequeued",
+    color: "text-yellow-500",
+  },
+  QUEUED: {
+    icon: <Clock className="size-5 text-gray-500" />,
+    label: "Queued",
+    color: "text-gray-500",
+  },
+  WAITING: {
+    icon: <Clock className="size-5 text-gray-500" />,
+    label: "Waiting",
+    color: "text-gray-500",
+  },
+  DELAYED: {
+    icon: <Clock className="size-5 text-gray-500" />,
+    label: "Delayed",
+    color: "text-gray-500",
+  },
+  RESCHEDULED: {
+    icon: <Clock className="size-5 text-gray-500" />,
+    label: "Rescheduled",
+    color: "text-gray-500",
+  },
+  FROZEN: {
+    icon: <Clock className="size-5 text-gray-500" />,
+    label: "Frozen",
+    color: "text-gray-500",
+  },
+  PENDING_VERSION: {
+    icon: <Clock className="size-5 text-gray-500" />,
+    label: "Pending Version",
+    color: "text-gray-500",
+  },
+};
+
+const FALLBACK_CONFIG: StatusConfigEntry = {
+  icon: <Clock className="size-5 text-gray-500" />,
+  label: "Unknown",
+  color: "text-gray-500",
+};
 
 export default function RunDetails({ runId, data }: RunDetailsProps) {
-  const config = STATUS_CONFIG[data.status];
+  const config = STATUS_CONFIG[data.status] ?? FALLBACK_CONFIG;
   const logs = data.metadata?.logs ?? [];
   const currentStep = data.metadata?.currentStep;
   const pathname = usePathname();
@@ -69,7 +155,7 @@ export default function RunDetails({ runId, data }: RunDetailsProps) {
         <RunLogsList logs={logs as string[]} />
       </div>
 
-      {data.status === "failed" && data.error && (
+      {ERROR_STATUSES.has(data.status) && data.error && (
         <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 dark:border-red-900 dark:bg-red-950">
           <p className="text-sm font-medium text-red-800 dark:text-red-200">
             {data.error}

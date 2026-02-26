@@ -13,26 +13,51 @@ function getTaskDisplayName(taskIdentifier: string): string {
   return TASK_NAME_MAP[taskIdentifier] ?? taskIdentifier;
 }
 
-function getStatusColor(status: TaskRunItem["status"]): string {
-  switch (status) {
-    case "complete":
-      return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400";
-    case "failed":
-      return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400";
-    case "pending":
-      return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400";
+const SUCCESS_STATUSES = new Set(["COMPLETED"]);
+const ERROR_STATUSES = new Set([
+  "FAILED",
+  "CRASHED",
+  "SYSTEM_FAILURE",
+  "TIMED_OUT",
+  "EXPIRED",
+  "INTERRUPTED",
+]);
+const ACTIVE_STATUSES = new Set(["EXECUTING", "DEQUEUED"]);
+
+function getStatusColor(status: string): string {
+  if (SUCCESS_STATUSES.has(status)) {
+    return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400";
   }
+  if (ERROR_STATUSES.has(status)) {
+    return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400";
+  }
+  if (ACTIVE_STATUSES.has(status)) {
+    return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400";
+  }
+  return "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400";
 }
 
-function getStatusLabel(status: TaskRunItem["status"]): string {
-  switch (status) {
-    case "complete":
-      return "Complete";
-    case "failed":
-      return "Failed";
-    case "pending":
-      return "Pending";
-  }
+const STATUS_LABELS: Record<string, string> = {
+  COMPLETED: "Completed",
+  FAILED: "Failed",
+  CRASHED: "Crashed",
+  CANCELED: "Canceled",
+  SYSTEM_FAILURE: "System Failure",
+  TIMED_OUT: "Timed Out",
+  EXPIRED: "Expired",
+  INTERRUPTED: "Interrupted",
+  EXECUTING: "Executing",
+  DEQUEUED: "Dequeued",
+  QUEUED: "Queued",
+  WAITING: "Waiting",
+  DELAYED: "Delayed",
+  RESCHEDULED: "Rescheduled",
+  FROZEN: "Frozen",
+  PENDING_VERSION: "Pending Version",
+};
+
+function getStatusLabel(status: string): string {
+  return STATUS_LABELS[status] ?? status;
 }
 
 function formatDuration(durationMs: number | null): string {
