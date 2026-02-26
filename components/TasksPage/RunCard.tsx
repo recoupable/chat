@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import type { TaskRunItem } from "@/lib/tasks/getTaskRuns";
-import { getTaskDisplayName } from "./getTaskDisplayName";
+import { getTaskDisplayName } from "@/lib/tasks/getTaskDisplayName";
 
 const SUCCESS_STATUSES = new Set(["COMPLETED"]);
 const ERROR_STATUSES = new Set([
