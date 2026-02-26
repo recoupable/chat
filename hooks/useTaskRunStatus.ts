@@ -5,8 +5,17 @@ import {
   type TaskRunStatus,
 } from "@/lib/tasks/getTaskRunStatus";
 
+const TERMINAL_STATUSES = new Set([
+  "COMPLETED",
+  "FAILED",
+  "CRASHED",
+  "CANCELED",
+  "SYSTEM_FAILURE",
+  "INTERRUPTED",
+]);
+
 const isTerminal = (data: TaskRunStatus | undefined): boolean =>
-  data?.status === "complete" || data?.status === "failed";
+  TERMINAL_STATUSES.has(data?.status ?? "");
 
 /**
  * Polls the task run status every 3s until the run reaches a terminal state.

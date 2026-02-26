@@ -2,7 +2,9 @@
 
 import { useArtistProvider } from "@/providers/ArtistProvider";
 import { useScheduledActions } from "@/hooks/useScheduledActions";
+import { useTaskRuns } from "@/hooks/useTaskRuns";
 import TasksList from "./TasksList";
+import RecentRunsList from "./RecentRunsList";
 import useAutoLogin from "@/hooks/useAutoLogin";
 
 const TasksPage = () => {
@@ -12,8 +14,14 @@ const TasksPage = () => {
   const { data, isLoading, isError } = useScheduledActions({
     artistAccountId,
   });
+  const {
+    data: taskRuns,
+    isLoading: isRunsLoading,
+    isError: isRunsError,
+  } = useTaskRuns();
 
   const tasks = data ?? [];
+  const runs = taskRuns ?? [];
 
   return (
     <div className="max-w-full md:max-w-[calc(100vw-200px)] grow py-8 px-6 md:px-12">
@@ -25,6 +33,19 @@ const TasksPage = () => {
       </p>
 
       <TasksList tasks={tasks} isLoading={isLoading} isError={isError} />
+
+      <div className="max-w-2xl mx-auto mt-8">
+        <div className="mb-8">
+          <h3 className="text-lg font-semibold text-foreground dark:text-white">
+            Recent Runs
+          </h3>
+        </div>
+        <RecentRunsList
+          runs={runs}
+          isLoading={isRunsLoading}
+          isError={isRunsError}
+        />
+      </div>
     </div>
   );
 };

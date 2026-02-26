@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Loader2, CheckCircle2, XCircle } from "lucide-react";
 import type { TaskRunStatus } from "@/lib/tasks/getTaskRunStatus";
+import { ERROR_STATUSES, STATUS_CONFIG, FALLBACK_CONFIG } from "./statusConfig";
 import RunLogsList from "./RunLogsList";
 import AccountIdDisplay from "@/components/ArtistSetting/AccountIdDisplay";
 
@@ -12,26 +12,8 @@ interface RunDetailsProps {
   data: TaskRunStatus;
 }
 
-const STATUS_CONFIG = {
-  pending: {
-    icon: <Loader2 className="size-5 animate-spin text-blue-500" />,
-    label: "Running",
-    color: "text-blue-500",
-  },
-  complete: {
-    icon: <CheckCircle2 className="size-5 text-green-500" />,
-    label: "Complete",
-    color: "text-green-500",
-  },
-  failed: {
-    icon: <XCircle className="size-5 text-red-500" />,
-    label: "Failed",
-    color: "text-red-500",
-  },
-} as const;
-
 export default function RunDetails({ runId, data }: RunDetailsProps) {
-  const config = STATUS_CONFIG[data.status];
+  const config = STATUS_CONFIG[data.status] ?? FALLBACK_CONFIG;
   const logs = data.metadata?.logs ?? [];
   const currentStep = data.metadata?.currentStep;
   const pathname = usePathname();
@@ -69,10 +51,10 @@ export default function RunDetails({ runId, data }: RunDetailsProps) {
         <RunLogsList logs={logs as string[]} />
       </div>
 
-      {data.status === "failed" && data.error && (
+      {ERROR_STATUSES.has(data.status) && data.error && (
         <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 dark:border-red-900 dark:bg-red-950">
           <p className="text-sm font-medium text-red-800 dark:text-red-200">
-            {data.error}
+            {data.error?.message}
           </p>
         </div>
       )}
