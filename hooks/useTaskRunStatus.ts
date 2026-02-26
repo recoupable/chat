@@ -11,8 +11,6 @@ const TERMINAL_STATUSES = new Set([
   "CRASHED",
   "CANCELED",
   "SYSTEM_FAILURE",
-  "TIMED_OUT",
-  "EXPIRED",
   "INTERRUPTED",
 ]);
 

@@ -22,8 +22,6 @@ const ERROR_STATUSES = new Set([
   "FAILED",
   "CRASHED",
   "SYSTEM_FAILURE",
-  "TIMED_OUT",
-  "EXPIRED",
   "INTERRUPTED",
 ]);
 
@@ -48,16 +46,6 @@ const STATUS_CONFIG: Record<string, StatusConfigEntry> = {
     label: "System Failure",
     color: "text-red-500",
   },
-  TIMED_OUT: {
-    icon: <XCircle className="size-5 text-red-500" />,
-    label: "Timed Out",
-    color: "text-red-500",
-  },
-  EXPIRED: {
-    icon: <XCircle className="size-5 text-red-500" />,
-    label: "Expired",
-    color: "text-red-500",
-  },
   INTERRUPTED: {
     icon: <XCircle className="size-5 text-red-500" />,
     label: "Interrupted",
@@ -73,9 +61,9 @@ const STATUS_CONFIG: Record<string, StatusConfigEntry> = {
     label: "Executing",
     color: "text-yellow-500",
   },
-  DEQUEUED: {
+  REATTEMPTING: {
     icon: <Loader2 className="size-5 animate-spin text-yellow-500" />,
-    label: "Dequeued",
+    label: "Reattempting",
     color: "text-yellow-500",
   },
   QUEUED: {
@@ -83,19 +71,9 @@ const STATUS_CONFIG: Record<string, StatusConfigEntry> = {
     label: "Queued",
     color: "text-gray-500",
   },
-  WAITING: {
-    icon: <Clock className="size-5 text-gray-500" />,
-    label: "Waiting",
-    color: "text-gray-500",
-  },
   DELAYED: {
     icon: <Clock className="size-5 text-gray-500" />,
     label: "Delayed",
-    color: "text-gray-500",
-  },
-  RESCHEDULED: {
-    icon: <Clock className="size-5 text-gray-500" />,
-    label: "Rescheduled",
     color: "text-gray-500",
   },
   FROZEN: {

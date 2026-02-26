@@ -18,11 +18,9 @@ const ERROR_STATUSES = new Set([
   "FAILED",
   "CRASHED",
   "SYSTEM_FAILURE",
-  "TIMED_OUT",
-  "EXPIRED",
   "INTERRUPTED",
 ]);
-const ACTIVE_STATUSES = new Set(["EXECUTING", "DEQUEUED"]);
+const ACTIVE_STATUSES = new Set(["EXECUTING", "REATTEMPTING"]);
 
 function getStatusColor(status: string): string {
   if (SUCCESS_STATUSES.has(status)) {
@@ -43,15 +41,11 @@ const STATUS_LABELS: Record<string, string> = {
   CRASHED: "Crashed",
   CANCELED: "Canceled",
   SYSTEM_FAILURE: "System Failure",
-  TIMED_OUT: "Timed Out",
-  EXPIRED: "Expired",
   INTERRUPTED: "Interrupted",
   EXECUTING: "Executing",
-  DEQUEUED: "Dequeued",
+  REATTEMPTING: "Reattempting",
   QUEUED: "Queued",
-  WAITING: "Waiting",
   DELAYED: "Delayed",
-  RESCHEDULED: "Rescheduled",
   FROZEN: "Frozen",
   PENDING_VERSION: "Pending Version",
 };
