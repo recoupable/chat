@@ -62,13 +62,6 @@ const PromptSandboxStreamProgress: React.FC<
             {progress.output || "(no output)"}
           </pre>
         </div>
-        {progress.stderr && (
-          <div className="border border-red-800/30 rounded-lg bg-red-950/20 overflow-hidden">
-            <pre className="p-3 text-xs text-red-400 font-mono whitespace-pre-wrap max-h-40 overflow-y-auto">
-              {progress.stderr}
-            </pre>
-          </div>
-        )}
       </div>
     );
   }
