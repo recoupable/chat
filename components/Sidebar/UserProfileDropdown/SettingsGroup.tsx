@@ -10,7 +10,7 @@ import { Check } from "lucide-react";
 import { useTheme } from "next-themes";
 import ManageSubscriptionButton from "./ManageSubscriptionButton";
 import ConnectorsMenuItem from "./ConnectorsMenuItem";
-import themeLabel from "./themeLabel";
+import themeLabel from "@/lib/sidebar/themeLabel";
 
 const SettingsGroup = () => {
   const { theme, setTheme } = useTheme();

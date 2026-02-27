@@ -21,9 +21,6 @@ const NewChatButton = ({ isExpanded, email, onClick }: NewChatButtonProps) => (
       <div className="w-[21px] flex justify-center items-center shrink-0">
         <SquarePen className="size-[18px]" />
       </div>
-      {/* Label reflects auth state: authenticated users start a new chat,
-          guests are prompted to sign in. If these flows diverge, consider
-          splitting into NewChatButton and SignInButton. */}
       <span className={cn(
         "overflow-hidden transition-all duration-200",
         isExpanded ? "opacity-100 max-w-[150px]" : "opacity-0 max-w-0"

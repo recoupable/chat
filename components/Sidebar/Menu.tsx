@@ -63,8 +63,6 @@ const Menu = ({ isExpanded, isPinned = false, onTogglePin }: MenuProps) => {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.15, exit: { duration: 0.05 } }}
           >
-            {/* toggleModal is a no-op — Menu is desktop-only (hidden md:flex).
-                Mobile chat modal is handled separately via useClickChat.tsx. */}
             {!email ? (
               <RecentChatsSectionSkeleton />
             ) : (
