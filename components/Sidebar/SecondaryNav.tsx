@@ -1,0 +1,31 @@
+import AgentsNavItem from "./AgentsNavItem";
+import TasksNavItem from "./TasksNavItem";
+import FanGroupNavItem from "./FanGroupNavItem";
+import FilesNavItem from "./FilesNavItem";
+
+interface SecondaryNavProps {
+  isExpanded: boolean;
+  isAgents: boolean;
+  isTasks: boolean;
+  isSegments: boolean;
+  isFiles: boolean;
+  onNavigate: (path: string) => void;
+}
+
+const SecondaryNav = ({
+  isExpanded,
+  isAgents,
+  isTasks,
+  isSegments,
+  isFiles,
+  onNavigate,
+}: SecondaryNavProps) => (
+  <div className="flex flex-col gap-1 w-full mt-3">
+    <AgentsNavItem isActive={isAgents} isExpanded={isExpanded} onClick={() => onNavigate("agents")} />
+    <TasksNavItem isActive={isTasks} isExpanded={isExpanded} onClick={() => onNavigate("tasks")} />
+    <FanGroupNavItem isActive={isSegments} isExpanded={isExpanded} onClick={() => onNavigate("segments")} />
+    <FilesNavItem isActive={isFiles} isExpanded={isExpanded} onClick={() => onNavigate("files")} />
+  </div>
+);
+
+export default SecondaryNav;

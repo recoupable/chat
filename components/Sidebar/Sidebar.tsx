@@ -7,11 +7,15 @@ import AccountModal from "../AccountModal";
 import OrgSettingsModal from "../Organization/OrgSettingsModal";
 import CreateOrgModal from "../Organization/CreateOrgModal";
 import useIsMobile from "@/hooks/useIsMobile";
+import useSidebarPin from "@/hooks/useSidebarPin";
 
 const Sidebar = () => {
   const [menuExpanded, setMenuExpanded] = useState(false);
+  const { isPinned, togglePin } = useSidebarPin();
   const isMobile = useIsMobile();
-  const animate = { width: menuExpanded ? 240 : 56 };
+
+  const isOpen = isPinned || menuExpanded;
+  const animate = { width: isOpen ? 240 : 56 };
   const initial = { width: 56 };
 
   return (
@@ -20,10 +24,14 @@ const Sidebar = () => {
       animate={animate}
       initial={initial}
       transition={{ duration: 0.2 }}
-      onMouseEnter={() => setMenuExpanded(!isMobile)}
-      onMouseLeave={() => setMenuExpanded(false)}
+      onMouseEnter={() => { if (!isPinned) setMenuExpanded(!isMobile); }}
+      onMouseLeave={() => { if (!isPinned) setMenuExpanded(false); }}
     >
-      <Menu isExpanded={menuExpanded} />
+      <Menu
+        isExpanded={isOpen}
+        isPinned={isPinned}
+        onTogglePin={togglePin}
+      />
       <AccountModal />
       <OrgSettingsModal />
       <CreateOrgModal />
