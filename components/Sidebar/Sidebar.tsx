@@ -7,10 +7,11 @@ import AccountModal from "../AccountModal";
 import OrgSettingsModal from "../Organization/OrgSettingsModal";
 import CreateOrgModal from "../Organization/CreateOrgModal";
 import useIsMobile from "@/hooks/useIsMobile";
+import useSidebarPin from "@/hooks/useSidebarPin";
 
 const Sidebar = () => {
   const [menuExpanded, setMenuExpanded] = useState(false);
-  const [isPinned, setIsPinned] = useState(false);
+  const { isPinned, togglePin } = useSidebarPin();
   const isMobile = useIsMobile();
 
   const isOpen = isPinned || menuExpanded;
@@ -29,7 +30,7 @@ const Sidebar = () => {
       <Menu
         isExpanded={isOpen}
         isPinned={isPinned}
-        onTogglePin={() => setIsPinned((prev) => !prev)}
+        onTogglePin={togglePin}
       />
       <AccountModal />
       <OrgSettingsModal />
