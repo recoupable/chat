@@ -1,5 +1,5 @@
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { IconLogout } from "@tabler/icons-react";
+import { LogOut } from "lucide-react";
 import { useUserProvider } from "@/providers/UserProvder";
 
 const LogoutButton = () => {
@@ -10,7 +10,7 @@ const LogoutButton = () => {
       className="cursor-pointer text-destructive focus:text-destructive"
       onClick={signOut}
     >
-      <IconLogout />
+      <LogOut className="h-4 w-4" />
       Log out
     </DropdownMenuItem>
   );

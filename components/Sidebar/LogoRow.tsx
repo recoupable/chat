@@ -3,7 +3,7 @@ import { PanelLeftClose, PanelLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Logo from "../Logo";
 
-interface LogoRowProps {
+export interface LogoRowProps {
   isExpanded: boolean;
   isPinned?: boolean;
   onTogglePin?: () => void;

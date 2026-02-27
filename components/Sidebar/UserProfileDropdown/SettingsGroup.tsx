@@ -32,17 +32,17 @@ const SettingsGroup = () => {
           <span className="text-xs text-muted-foreground">{themeLabel(theme)}</span>
         </DropdownMenuSubTrigger>
         <DropdownMenuSubContent>
-          <DropdownMenuItem onClick={() => setTheme("light")} className="cursor-pointer">
+          <DropdownMenuItem onSelect={() => setTheme("light")} className="cursor-pointer">
             <Sun className="h-4 w-4" />
             <span>Light</span>
             {theme === "light" && <Check className="h-4 w-4 ml-auto" />}
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setTheme("dark")} className="cursor-pointer">
+          <DropdownMenuItem onSelect={() => setTheme("dark")} className="cursor-pointer">
             <Moon className="h-4 w-4" />
             <span>Dark</span>
             {theme === "dark" && <Check className="h-4 w-4 ml-auto" />}
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setTheme("system")} className="cursor-pointer">
+          <DropdownMenuItem onSelect={() => setTheme("system")} className="cursor-pointer">
             <Monitor className="h-4 w-4" />
             <span>System</span>
             {theme === "system" && <Check className="h-4 w-4 ml-auto" />}

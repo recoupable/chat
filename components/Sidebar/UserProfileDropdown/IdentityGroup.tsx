@@ -1,5 +1,5 @@
 import { DropdownMenuGroup, DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { IconUser } from "@tabler/icons-react";
+import { User } from "lucide-react";
 import OrgSelector from "./OrgSelector";
 
 interface IdentityGroupProps {
@@ -9,7 +9,7 @@ interface IdentityGroupProps {
 const IdentityGroup = ({ onProfileClick }: IdentityGroupProps) => (
   <DropdownMenuGroup>
     <DropdownMenuItem onClick={onProfileClick} className="cursor-pointer">
-      <IconUser />
+      <User className="h-4 w-4" />
       Profile
     </DropdownMenuItem>
     <OrgSelector />

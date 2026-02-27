@@ -12,14 +12,24 @@ const useSidebarPin = () => {
   // Read persisted value after mount so server and client start with the same
   // initial state (false), preventing a hydration mismatch.
   useEffect(() => {
-    if (localStorage.getItem(STORAGE_KEY) === "true") {
-      setIsPinned(true);
+    try {
+      if (typeof window !== "undefined" && localStorage.getItem(STORAGE_KEY) === "true") {
+        setIsPinned(true);
+      }
+    } catch {
+      // localStorage may be restricted in some environments; fail silently.
     }
   }, []);
 
   // Write back to localStorage whenever the value changes.
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, String(isPinned));
+    try {
+      if (typeof window !== "undefined") {
+        localStorage.setItem(STORAGE_KEY, String(isPinned));
+      }
+    } catch {
+      // localStorage may be restricted in some environments; fail silently.
+    }
   }, [isPinned]);
 
   const togglePin = () => setIsPinned((prev) => !prev);
