@@ -11,15 +11,10 @@ import { useTheme } from "next-themes";
 import ManageSubscriptionButton from "./ManageSubscriptionButton";
 import ConnectorsMenuItem from "./ConnectorsMenuItem";
 import themeLabel from "@/lib/sidebar/themeLabel";
+import getThemeIcon from "@/lib/sidebar/getThemeIcon";
 
 const SettingsGroup = () => {
   const { theme, setTheme } = useTheme();
-
-  const getThemeIcon = () => {
-    if (theme === "dark") return <Moon className="h-4 w-4" />;
-    if (theme === "light") return <Sun className="h-4 w-4" />;
-    return <Monitor className="h-4 w-4" />;
-  };
 
   return (
     <DropdownMenuGroup>
@@ -27,7 +22,7 @@ const SettingsGroup = () => {
       <ConnectorsMenuItem />
       <DropdownMenuSub>
         <DropdownMenuSubTrigger className="cursor-pointer">
-          {getThemeIcon()}
+          {getThemeIcon(theme)}
           <span className="flex-1">Theme</span>
           <span className="text-xs text-muted-foreground">{themeLabel(theme)}</span>
         </DropdownMenuSubTrigger>
