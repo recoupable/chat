@@ -1,17 +1,39 @@
 import { usePaymentProvider } from "@/providers/PaymentProvider";
+import { AnimatedCircularProgressBar } from "@/components/ui/animated-circular-progress-bar";
 
-/** Compact inline credits display that lives inside the identity block */
 const CreditsUsage = () => {
   const { totalCredits, credits, isLoading } = usePaymentProvider();
 
   return (
-    <p className="text-[11px] text-muted-foreground">
-      {isLoading ? (
-        <span className="inline-block h-3 w-16 bg-muted animate-pulse rounded" />
-      ) : (
-        `${credits.toLocaleString()} / ${totalCredits.toLocaleString()} credits`
-      )}
-    </p>
+    <div className="px-2 py-1.5">
+      <div className="text-xs font-medium text-muted-foreground mb-2 flex items-center gap-2">
+        <AnimatedCircularProgressBar
+          max={totalCredits}
+          min={0}
+          value={credits}
+          gaugePrimaryColor="hsl(var(--primary))"
+          gaugeSecondaryColor="hsl(var(--muted))"
+          className="size-3"
+          hideText
+        />
+        Credits
+      </div>
+
+      <div className="space-y-1 text-xs">
+        <div className="flex justify-between">
+          <span className="text-muted-foreground">Total</span>
+          <span className="font-medium">{totalCredits.toLocaleString()}</span>
+        </div>
+        <div className="flex justify-between">
+          <span className="text-muted-foreground">Remaining</span>
+          {isLoading ? (
+            <div className="h-4 w-8 bg-muted animate-pulse rounded" />
+          ) : (
+            <span className="font-medium">{credits.toLocaleString()}</span>
+          )}
+        </div>
+      </div>
+    </div>
   );
 };
 

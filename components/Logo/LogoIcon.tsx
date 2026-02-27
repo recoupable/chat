@@ -1,5 +1,3 @@
-import { cn } from "@/lib/utils";
-
 /**
  * Recoup logo icon rendered as inline SVG with currentColor.
  * Automatically adapts to light/dark mode via the text color.
@@ -11,7 +9,7 @@ const LogoIcon = ({ className }: { className?: string }) => (
     viewBox="0 0 21 23"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
-    className={cn(className)}
+    className={className}
     aria-hidden="true"
   >
     <path

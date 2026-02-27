@@ -58,7 +58,7 @@ export async function generateMetadata(): Promise<Metadata> {
       images: "/backgrounds/marketing_screenshot.png",
     },
     manifest: "/manifest.json",
-    icons: [{ rel: "icon", url: "/brand/icon-sky-bg.png" }],
+    icons: [{ rel: "icon", url: "/icon-with-background.png" }],
     viewport:
       "minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, viewport-fit=cover",
     themeColor: [{ media: "(prefers-color-scheme: dark)", color: "#fff" }],

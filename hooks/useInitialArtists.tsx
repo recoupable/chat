@@ -62,16 +62,7 @@ const useInitialArtists = (
 
   const handleSelectArtist = (artist: ArtistRecord | null) => {
     setSelectedArtist(artist);
-    if (artist) {
-      saveSelection(artist);
-    } else {
-      // Clear saved selection so the restore effect doesn't re-select
-      setSelections((prev) => {
-        const next = { ...prev };
-        delete next[orgKey];
-        return next;
-      });
-    }
+    if (artist) saveSelection(artist);
   };
 
   return {
