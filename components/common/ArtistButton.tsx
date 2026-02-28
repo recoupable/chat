@@ -53,7 +53,7 @@ export const ArtistButton = ({
       {!isCompact && (
         <>
           <div
-            className={`text-left grow ${showHighlight ? 'font-medium text-white' : ''}`}
+            className={`text-left grow ${showHighlight ? 'font-medium text-foreground' : ''}`}
             title={artist?.name || ""}
           >
             {displayName}
