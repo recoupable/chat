@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Use class-based dark mode (matches next-themes attribute="class") */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* Add KaTeX CSS for math rendering */
 @import 'katex/dist/katex.min.css';
 
