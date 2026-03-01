@@ -43,7 +43,7 @@ const updateArtistProfile = async (
       // Only update fields that are non-empty, otherwise keep existing
       const infoUpdate: Partial<typeof account_info> = {};
       infoUpdate.image = image || account_info.image;
-      infoUpdate.instruction = instruction || account_info.instruction;
+      infoUpdate.instruction = instruction ?? account_info.instruction;
       
       if (knowledges !== null && knowledges !== undefined) {
         const uniqueMap = new Map(knowledges.map(k => [k.url, k]));
