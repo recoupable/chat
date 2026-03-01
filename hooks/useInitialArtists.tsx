@@ -29,6 +29,15 @@ const useInitialArtists = (
     [orgKey, setSelections]
   );
 
+  // Remove the saved selection for the current org so the restoration effect won't re-select
+  const clearSelection = useCallback(() => {
+    setSelections((prev) => {
+      const next = { ...prev };
+      delete next[orgKey];
+      return next;
+    });
+  }, [orgKey, setSelections]);
+
   // Restore saved artist only if it belongs to current org
   useEffect(() => {
     if (artists.length === 0) return;
@@ -62,7 +71,11 @@ const useInitialArtists = (
 
   const handleSelectArtist = (artist: ArtistRecord | null) => {
     setSelectedArtist(artist);
-    if (artist) saveSelection(artist);
+    if (artist) {
+      saveSelection(artist);
+    } else {
+      clearSelection();
+    }
   };
 
   return {
