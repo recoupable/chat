@@ -2,6 +2,7 @@ import {
   SiGooglesheets,
   SiGoogledrive,
   SiGoogledocs,
+  SiTiktok,
 } from "@icons-pack/react-simple-icons";
 import { Link2 } from "lucide-react";
 
@@ -16,6 +17,7 @@ export function getConnectorIcon(slug: string, size = 24): React.ReactNode {
     googlesheets: <SiGooglesheets {...iconProps} color="#34A853" />,
     googledrive: <SiGoogledrive {...iconProps} color="#4285F4" />,
     googledocs: <SiGoogledocs {...iconProps} color="#4285F4" />,
+    tiktok: <SiTiktok {...iconProps} />,
   };
 
   return (
