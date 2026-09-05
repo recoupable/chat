@@ -4,6 +4,7 @@ import usePayments from "@/hooks/usePayments";
 import useAutoTopUp from "@/hooks/useAutoTopUp";
 import useAccountBalance from "@/hooks/useAccountBalance";
 import { formatCreditsAsUsd } from "@/lib/credits/formatCreditsAsUsd";
+import isForbiddenError from "@/lib/usage/isForbiddenError";
 
 const NO_AUTO_TOP_UP = {
   enabled: false,
@@ -29,13 +30,16 @@ const useBillingReads = (accountId: string | undefined) => {
     autoTopUp.isLoading ||
     balance.isLoading;
   const failed = paymentMethod.error || subscription.error || payments.error;
+  // The api enforces access: a 403 on the card or plan read means the caller may not see this account.
+  const forbidden =
+    isForbiddenError(paymentMethod.error) ||
+    isForbiddenError(subscription.error);
   const ready =
     !isLoading &&
     !!paymentMethod.data &&
     !!subscription.data &&
     !!payments.data;
   const card = paymentMethod.data?.card ?? null;
-  const rows = payments.data?.pages.flatMap((page) => page.payments) ?? [];
   // Null when the balance read failed: the panel says so instead of claiming $0.00.
   const balanceUsd =
     balance.data === undefined ? null : formatCreditsAsUsd(balance.data);
@@ -53,9 +57,9 @@ const useBillingReads = (accountId: string | undefined) => {
     autoTopUpSettings,
     isLoading,
     failed,
+    forbidden,
     ready,
     card,
-    rows,
     balanceUsd,
   };
 };

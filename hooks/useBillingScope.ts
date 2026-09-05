@@ -3,29 +3,57 @@ import { useUserProvider } from "@/providers/UserProvder";
 import { useOrganization } from "@/providers/OrganizationProvider";
 import useAccountOrganizations from "@/hooks/useAccountOrganizations";
 
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export interface BillingScope {
-  /** The account the billing page reads and writes: the selected org, else the signed-in account. */
+  /** The account the billing page reads and writes. */
   accountId: string | undefined;
   isOrg: boolean;
   /** True while an org is selected but the memberships that vouch for it are still loading. */
   isResolving: boolean;
-  /** "your account" or the org's name, for the page subtitle. */
+  /** "your account", the org's name, or "this account" for a forced id outside my orgs. */
   scopeLabel: string;
+  /** True when the id came from the route (/billing/{accountId}); the org selector is ignored. */
+  forced: boolean;
+  /** True when a forced id is not a UUID; nothing is read. */
+  invalid: boolean;
   switchToPersonal: () => void;
 }
 
-/** Which account /billing is showing: the selected organization when it is one of mine, else me. */
-const useBillingScope = (): BillingScope => {
+/**
+ * Which account /billing shows. Precedence: the route's account id, else the
+ * selected organization when it is one of mine, else me. The api decides
+ * access; a forced id the caller may not read surfaces as a 403 on the reads.
+ */
+const useBillingScope = (forcedAccountId?: string): BillingScope => {
   const { userData } = useUserProvider();
   const { selectedOrgId, setSelectedOrgId } = useOrganization();
   const memberships = useAccountOrganizations();
-  const org = selectedOrgId
-    ? memberships.data?.find((o) => o.organization_id === selectedOrgId)
-    : undefined;
   const switchToPersonal = useCallback(
     () => setSelectedOrgId(null),
     [setSelectedOrgId],
   );
+  const me = userData?.account_id as string | undefined;
+  const findOrg = (id: string | null | undefined) =>
+    id ? memberships.data?.find((o) => o.organization_id === id) : undefined;
+
+  if (forcedAccountId !== undefined) {
+    const invalid = !UUID.test(forcedAccountId);
+    const org = invalid ? undefined : findOrg(forcedAccountId);
+    return {
+      accountId: invalid ? undefined : forcedAccountId,
+      isOrg: !!org,
+      isResolving: false,
+      scopeLabel: org
+        ? org.organization_name || "your organization"
+        : forcedAccountId === me
+          ? "your account"
+          : "this account",
+      forced: true,
+      invalid,
+      switchToPersonal,
+    };
+  }
   // The page waits for the memberships rather than flashing personal billing for the org.
   if (selectedOrgId && !memberships.data && !memberships.isError) {
     return {
@@ -33,25 +61,31 @@ const useBillingScope = (): BillingScope => {
       isOrg: true,
       isResolving: true,
       scopeLabel: "your organization",
+      forced: false,
+      invalid: false,
       switchToPersonal,
     };
   }
-  if (org) {
-    return {
-      accountId: org.organization_id,
-      isOrg: true,
-      isResolving: false,
-      scopeLabel: org.organization_name || "your organization",
-      switchToPersonal,
-    };
-  }
-  return {
-    accountId: userData?.account_id as string | undefined,
-    isOrg: false,
-    isResolving: false,
-    scopeLabel: "your account",
-    switchToPersonal,
-  };
+  const org = findOrg(selectedOrgId);
+  return org
+    ? {
+        accountId: org.organization_id,
+        isOrg: true,
+        isResolving: false,
+        scopeLabel: org.organization_name || "your organization",
+        forced: false,
+        invalid: false,
+        switchToPersonal,
+      }
+    : {
+        accountId: me,
+        isOrg: false,
+        isResolving: false,
+        scopeLabel: "your account",
+        forced: false,
+        invalid: false,
+        switchToPersonal,
+      };
 };
 
 export default useBillingScope;
