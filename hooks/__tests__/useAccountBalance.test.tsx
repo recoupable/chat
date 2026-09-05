@@ -29,4 +29,19 @@ describe("useAccountBalance", () => {
     await waitFor(() => expect(result.current.data).toBe(12400000));
     expect(getAccountCredits).toHaveBeenCalledWith("org-1", "tok");
   });
+
+  it("keeps its own cache entry apart from useCredits, under the credits prefix", async () => {
+    client.setQueryData(["credits", "acct-9"], { remaining_credits: 5 });
+    vi.mocked(getAccountCredits).mockResolvedValueOnce({
+      remaining_credits: 700,
+    } as never);
+    const { result } = renderHook(() => useAccountBalance("acct-9"), {
+      wrapper,
+    });
+    await waitFor(() => expect(result.current.data).toBe(700));
+    expect(client.getQueryData(["credits", "balance", "acct-9"])).toBe(700);
+    expect(client.getQueryData(["credits", "acct-9"])).toEqual({
+      remaining_credits: 5,
+    });
+  });
 });

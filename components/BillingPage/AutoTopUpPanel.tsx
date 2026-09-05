@@ -6,10 +6,9 @@ import MoneyInput from "./MoneyInput";
 import type { AutoTopUpSettings } from "@/lib/recoup/getAccountAutoTopUp";
 import type { AutoTopUpInput } from "@/lib/billing/updateClientAutoTopUp";
 import validateAutoTopUpForm from "@/lib/billing/validateAutoTopUpForm";
-
-const toDollars = (cents: number | null, fallback: string) =>
-  cents === null ? fallback : (cents / 100).toFixed(2);
-const toCents = (dollars: string) => Math.round(Number(dollars) * 100);
+import toDollars from "@/lib/billing/toDollars";
+import toCents from "@/lib/billing/toCents";
+import describeAutoTopUpHint from "./describeAutoTopUpHint";
 
 /** Toggle, amount, threshold and Save; disabled with a hint until a card is on file. */
 const AutoTopUpPanel = ({
@@ -22,7 +21,7 @@ const AutoTopUpPanel = ({
 }: {
   settings: AutoTopUpSettings;
   hasCard: boolean;
-  balanceUsd: string;
+  balanceUsd: string | null;
   onSave: (input: AutoTopUpInput) => void;
   isSaving: boolean;
   error: string | null;
@@ -37,12 +36,6 @@ const AutoTopUpPanel = ({
   const fieldsDisabled = !hasCard || !enabled;
   const invalid = hasCard ? validateAutoTopUpForm(amount, threshold) : null;
 
-  const hint = !hasCard
-    ? "Add a card first. Auto top-up charges the card on file when your balance runs low."
-    : enabled
-      ? `Charges the card on file automatically. Current balance ${balanceUsd}.`
-      : `Off. Turn on to charge the card on file when your balance runs low. Current balance ${balanceUsd}.`;
-
   return (
     <BillingPanel
       title="Auto top-up"
@@ -56,7 +49,7 @@ const AutoTopUpPanel = ({
       }
     >
       <p className="text-[13px] leading-relaxed text-muted-foreground">
-        {hint}
+        {describeAutoTopUpHint(hasCard, enabled, balanceUsd)}
       </p>
       <div className="flex flex-col gap-3 sm:flex-row">
         <MoneyInput

@@ -2,10 +2,9 @@
 
 import PageContainer from "@/components/TasksPage/PageContainer";
 import useBillingScope from "@/hooks/useBillingScope";
-import useAccountBalance from "@/hooks/useAccountBalance";
 import useBillingReads from "@/hooks/useBillingReads";
 import useBillingMutations from "@/hooks/useBillingMutations";
-import { formatCreditsAsUsd } from "@/lib/credits/formatCreditsAsUsd";
+import autoTopUpPanelKey from "./autoTopUpPanelKey";
 import BillingPageHeader from "./BillingPageHeader";
 import BillingSkeleton from "./BillingSkeleton";
 import PaymentMethodPanel from "./PaymentMethodPanel";
@@ -16,9 +15,8 @@ import UsageLoadMore from "@/components/UsagePage/UsageLoadMore";
 
 /** Card, plan, auto top-up and payments for the signed-in account or the selected organization. */
 const BillingPage = () => {
-  const { accountId, isOrg, scopeLabel, switchToPersonal } = useBillingScope();
-  const balance = useAccountBalance(accountId);
-
+  const { accountId, isOrg, isResolving, scopeLabel, switchToPersonal } =
+    useBillingScope();
   const {
     subscription,
     payments,
@@ -29,13 +27,14 @@ const BillingPage = () => {
     ready,
     card,
     rows,
+    balanceUsd,
   } = useBillingReads(accountId);
   const actions = useBillingMutations(accountId);
 
   return (
     <PageContainer className="max-w-4xl py-8">
       <BillingPageHeader scope={scopeLabel} />
-      {isLoading && <BillingSkeleton />}
+      {(isResolving || isLoading) && <BillingSkeleton />}
       {!isLoading && failed && (
         <p className="text-sm text-muted-foreground">
           Billing could not be loaded. Try again in a moment.
@@ -60,10 +59,10 @@ const BillingPage = () => {
           </div>
           <div className="mb-4">
             <AutoTopUpPanel
-              key={`${card?.last4 ?? "none"}-${autoTopUp.data?.enabled ?? "unset"}`}
+              key={autoTopUpPanelKey(accountId, card?.last4, autoTopUpSettings)}
               settings={autoTopUpSettings}
               hasCard={!!card && !autoTopUp.isError}
-              balanceUsd={formatCreditsAsUsd(balance.data ?? 0)}
+              balanceUsd={balanceUsd}
               onSave={(input) => actions.saveAutoTopUp.mutate(input)}
               isSaving={actions.saveAutoTopUp.isPending}
               error={

@@ -45,4 +45,24 @@ describe("useAutoTopUp", () => {
     renderHook(() => useAutoTopUp(undefined), { wrapper: makeWrapper() });
     expect(getAccountAutoTopUp).not.toHaveBeenCalled();
   });
+
+  it("retries a transient failure so the panel can recover", async () => {
+    vi.mocked(getAccountAutoTopUp)
+      .mockRejectedValueOnce(new Error("flaky"))
+      .mockResolvedValueOnce({
+        account_id: "acct-1",
+        enabled: true,
+        amountCents: 1,
+        thresholdCents: 1,
+        lastRunAt: null,
+        lastError: null,
+      });
+    const { result } = renderHook(() => useAutoTopUp("acct-1"), {
+      wrapper: makeWrapper(),
+    });
+    await waitFor(() => expect(result.current.data?.enabled).toBe(true), {
+      timeout: 4000,
+    });
+    expect(result.current.isError).toBe(false);
+  }, 6000);
 });

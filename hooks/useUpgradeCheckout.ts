@@ -5,15 +5,15 @@ import { toast } from "sonner";
 import createClientCheckoutSession from "@/lib/stripe/createClientCheckoutSession";
 import type { UpgradePlan } from "@/lib/upgrade/types";
 
-/** Opens Stripe Checkout for the plan a prompt's button names; every failure becomes a toast. */
+/** Opens Stripe Checkout for the plan a prompt's button names; a signed-out visitor gets the login modal, every failure a toast. */
 export function useUpgradeCheckout() {
-  const { getAccessToken } = usePrivy();
+  const { getAccessToken, login } = usePrivy();
 
   const startCheckout = async (plan: UpgradePlan) => {
     try {
       const accessToken = await getAccessToken();
       if (!accessToken) {
-        toast.error("Please sign in to upgrade.");
+        login();
         return;
       }
       const result = await createClientCheckoutSession(accessToken, { plan });

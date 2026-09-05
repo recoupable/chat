@@ -7,6 +7,8 @@ export interface BillingScope {
   /** The account the billing page reads and writes: the selected org, else the signed-in account. */
   accountId: string | undefined;
   isOrg: boolean;
+  /** True while an org is selected but the memberships that vouch for it are still loading. */
+  isResolving: boolean;
   /** "your account" or the org's name, for the page subtitle. */
   scopeLabel: string;
   switchToPersonal: () => void;
@@ -16,18 +18,29 @@ export interface BillingScope {
 const useBillingScope = (): BillingScope => {
   const { userData } = useUserProvider();
   const { selectedOrgId, setSelectedOrgId } = useOrganization();
-  const { data: organizations } = useAccountOrganizations();
+  const memberships = useAccountOrganizations();
   const org = selectedOrgId
-    ? organizations?.find((o) => o.organization_id === selectedOrgId)
+    ? memberships.data?.find((o) => o.organization_id === selectedOrgId)
     : undefined;
   const switchToPersonal = useCallback(
     () => setSelectedOrgId(null),
     [setSelectedOrgId],
   );
+  // The page waits for the memberships rather than flashing personal billing for the org.
+  if (selectedOrgId && !memberships.data && !memberships.isError) {
+    return {
+      accountId: undefined,
+      isOrg: true,
+      isResolving: true,
+      scopeLabel: "your organization",
+      switchToPersonal,
+    };
+  }
   if (org) {
     return {
       accountId: org.organization_id,
       isOrg: true,
+      isResolving: false,
       scopeLabel: org.organization_name || "your organization",
       switchToPersonal,
     };
@@ -35,6 +48,7 @@ const useBillingScope = (): BillingScope => {
   return {
     accountId: userData?.account_id as string | undefined,
     isOrg: false,
+    isResolving: false,
     scopeLabel: "your account",
     switchToPersonal,
   };

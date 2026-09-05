@@ -2,6 +2,8 @@ import usePaymentMethod from "@/hooks/usePaymentMethod";
 import useSubscription from "@/hooks/useSubscription";
 import usePayments from "@/hooks/usePayments";
 import useAutoTopUp from "@/hooks/useAutoTopUp";
+import useAccountBalance from "@/hooks/useAccountBalance";
+import { formatCreditsAsUsd } from "@/lib/credits/formatCreditsAsUsd";
 
 const NO_AUTO_TOP_UP = {
   enabled: false,
@@ -11,19 +13,21 @@ const NO_AUTO_TOP_UP = {
   lastError: null,
 };
 
-/** The four reads behind /billing for one account, with the page's loading and failure gates. */
+/** The five reads behind /billing for one account, with the page's loading and failure gates. */
 const useBillingReads = (accountId: string | undefined) => {
   const paymentMethod = usePaymentMethod(accountId);
   const subscription = useSubscription(accountId);
   const payments = usePayments(accountId);
   const autoTopUp = useAutoTopUp(accountId);
+  const balance = useAccountBalance(accountId);
 
-  // The auto top-up read is in the gate so the panel never shows Off defaults while it loads.
+  // Auto top-up and the balance are in the gate so the panel never shows Off or $0.00 while they load.
   const isLoading =
     paymentMethod.isLoading ||
     subscription.isLoading ||
     payments.isLoading ||
-    autoTopUp.isLoading;
+    autoTopUp.isLoading ||
+    balance.isLoading;
   const failed = paymentMethod.error || subscription.error || payments.error;
   const ready =
     !isLoading &&
@@ -32,6 +36,9 @@ const useBillingReads = (accountId: string | undefined) => {
     !!payments.data;
   const card = paymentMethod.data?.card ?? null;
   const rows = payments.data?.pages.flatMap((page) => page.payments) ?? [];
+  // Null when the balance read failed: the panel says so instead of claiming $0.00.
+  const balanceUsd =
+    balance.data === undefined ? null : formatCreditsAsUsd(balance.data);
   // Documented defaults when the account has never configured auto top-up (or the read failed).
   const autoTopUpSettings = autoTopUp.data ?? {
     account_id: accountId as string,
@@ -49,6 +56,7 @@ const useBillingReads = (accountId: string | undefined) => {
     ready,
     card,
     rows,
+    balanceUsd,
   };
 };
 

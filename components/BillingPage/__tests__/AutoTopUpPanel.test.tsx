@@ -144,4 +144,18 @@ describe("AutoTopUpPanel", () => {
         .disabled,
     ).toBe(true);
   });
+
+  it("says the balance is unavailable when it did not load", () => {
+    render(
+      <AutoTopUpPanel
+        settings={settings}
+        hasCard
+        balanceUsd={null}
+        onSave={vi.fn()}
+        isSaving={false}
+        error={null}
+      />,
+    );
+    expect(screen.getByText(/Current balance unavailable\./)).toBeTruthy();
+  });
 });
