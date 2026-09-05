@@ -60,17 +60,17 @@ const PaymentMethodPanel = ({
           <Button onClick={onConfigure} disabled={isBusy}>
             Configure billing
           </Button>
-          {onSwitchToPersonal && (
-            <button
-              type="button"
-              onClick={onSwitchToPersonal}
-              className="text-xs text-muted-foreground underline underline-offset-[3px] hover:text-foreground"
-            >
-              Switch to personal billing
-            </button>
-          )}
         </div>
       </>
+    )}
+    {onSwitchToPersonal && (
+      <button
+        type="button"
+        onClick={onSwitchToPersonal}
+        className="self-start text-xs text-muted-foreground underline underline-offset-[3px] hover:text-foreground"
+      >
+        Switch to personal billing
+      </button>
     )}
   </BillingPanel>
 );

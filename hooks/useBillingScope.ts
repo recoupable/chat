@@ -9,7 +9,9 @@ export interface BillingScope {
   /** The account the billing page reads and writes. */
   accountId: string | undefined;
   isOrg: boolean;
-  /** True while an org is selected but the memberships that vouch for it are still loading. */
+  /** True for the signed-in account itself: the only account self-serve checkout can upgrade. */
+  isMine: boolean;
+  /** True while the memberships that say whether the id is one of my orgs are still loading. */
   isResolving: boolean;
   /** "your account", the org's name, or "this account" for a forced id outside my orgs. */
   scopeLabel: string;
@@ -34,58 +36,40 @@ const useBillingScope = (forcedAccountId?: string): BillingScope => {
     [setSelectedOrgId],
   );
   const me = userData?.account_id as string | undefined;
-  const findOrg = (id: string | null | undefined) =>
-    id ? memberships.data?.find((o) => o.organization_id === id) : undefined;
-
-  if (forcedAccountId !== undefined) {
-    const invalid = !UUID.test(forcedAccountId);
-    const org = invalid ? undefined : findOrg(forcedAccountId);
-    return {
-      accountId: invalid ? undefined : forcedAccountId,
-      isOrg: !!org,
-      isResolving: false,
-      scopeLabel: org
-        ? org.organization_name || "your organization"
-        : forcedAccountId === me
-          ? "your account"
-          : "this account",
-      forced: true,
-      invalid,
-      switchToPersonal,
-    };
-  }
-  // The page waits for the memberships rather than flashing personal billing for the org.
-  if (selectedOrgId && !memberships.data && !memberships.isError) {
-    return {
-      accountId: undefined,
-      isOrg: true,
-      isResolving: true,
-      scopeLabel: "your organization",
-      forced: false,
-      invalid: false,
-      switchToPersonal,
-    };
-  }
-  const org = findOrg(selectedOrgId);
-  return org
-    ? {
-        accountId: org.organization_id,
-        isOrg: true,
-        isResolving: false,
-        scopeLabel: org.organization_name || "your organization",
-        forced: false,
-        invalid: false,
-        switchToPersonal,
-      }
-    : {
-        accountId: me,
-        isOrg: false,
-        isResolving: false,
-        scopeLabel: "your account",
-        forced: false,
-        invalid: false,
-        switchToPersonal,
-      };
+  const forced = forcedAccountId !== undefined;
+  const invalid = forced && !UUID.test(forcedAccountId);
+  const wanted = forced ? forcedAccountId : selectedOrgId;
+  // Only the memberships can say whether an id is one of my orgs; the page waits rather than guessing.
+  const isResolving =
+    !!wanted && !invalid && !memberships.data && !memberships.isError;
+  const org =
+    isResolving || invalid
+      ? undefined
+      : memberships.data?.find((o) => o.organization_id === wanted);
+  const accountId = invalid
+    ? undefined
+    : forced
+      ? forcedAccountId
+      : (org?.organization_id ?? (isResolving ? undefined : me));
+  const isMine = !!accountId && accountId === me;
+  const isOrg = !!org || (isResolving && !forced);
+  const scopeLabel = org
+    ? org.organization_name || "your organization"
+    : isOrg
+      ? "your organization"
+      : forced && !isMine
+        ? "this account"
+        : "your account";
+  return {
+    accountId,
+    isOrg,
+    isMine,
+    isResolving,
+    scopeLabel,
+    forced,
+    invalid,
+    switchToPersonal,
+  };
 };
 
 export default useBillingScope;

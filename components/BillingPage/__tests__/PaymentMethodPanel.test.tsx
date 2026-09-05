@@ -93,4 +93,25 @@ describe("PaymentMethodPanel", () => {
     );
     expect(onSwitchToPersonal).toHaveBeenCalled();
   });
+
+  it("shows Switch to personal billing with a card on file too", () => {
+    render(
+      <PaymentMethodPanel
+        card={{
+          brand: "visa",
+          last4: "4242",
+          exp_month: 12,
+          exp_year: 2027,
+          funding: "credit",
+        }}
+        onConfigure={vi.fn()}
+        onRemove={vi.fn()}
+        isBusy={false}
+        onSwitchToPersonal={vi.fn()}
+      />,
+    );
+    expect(
+      screen.getByRole("button", { name: "Switch to personal billing" }),
+    ).toBeTruthy();
+  });
 });

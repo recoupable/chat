@@ -23,15 +23,8 @@ const BillingPage = ({
 }: {
   accountId?: string;
 }) => {
-  const {
-    accountId,
-    isOrg,
-    isResolving,
-    scopeLabel,
-    forced,
-    invalid,
-    switchToPersonal,
-  } = useBillingScope(forcedAccountId);
+  const scope = useBillingScope(forcedAccountId);
+  const { accountId, isMine, isOrg, forced, invalid } = scope;
   const {
     subscription,
     payments,
@@ -45,18 +38,20 @@ const BillingPage = ({
     balanceUsd,
   } = useBillingReads(accountId);
   const actions = useBillingMutations(accountId);
+  // The api said no (403) or the id cannot be an account: no panels, no mutations.
+  const denied = invalid || forbidden;
 
   return (
     <PageContainer className="max-w-4xl py-8">
-      <BillingPageHeader scope={scopeLabel} />
-      {(invalid || forbidden) && <BillingAccessDenied />}
-      {!invalid && (isResolving || isLoading) && <BillingSkeleton />}
-      {!isLoading && failed && !forbidden && (
+      <BillingPageHeader scope={scope.scopeLabel} />
+      {denied && <BillingAccessDenied />}
+      {!denied && (scope.isResolving || isLoading) && <BillingSkeleton />}
+      {!denied && !isLoading && failed && (
         <p className="text-sm text-muted-foreground">
           Billing could not be loaded. Try again in a moment.
         </p>
       )}
-      {ready && subscription.data && payments.data && (
+      {!denied && ready && subscription.data && payments.data && (
         <>
           <div className="mb-4 flex flex-col gap-4 md:flex-row">
             <PaymentMethodPanel
@@ -65,14 +60,14 @@ const BillingPage = ({
               onRemove={() => actions.removeCard.mutate()}
               isBusy={actions.removeCard.isPending}
               onSwitchToPersonal={
-                isOrg && !forced ? switchToPersonal : undefined
+                isOrg && !forced ? scope.switchToPersonal : undefined
               }
             />
             <PlanPanel
               subscription={subscription.data}
               onUpgrade={actions.upgrade}
               onManage={actions.manageBilling}
-              canUpgrade={!isOrg}
+              canUpgrade={isMine}
             />
           </div>
           <div className="mb-4">

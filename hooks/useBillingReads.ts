@@ -30,12 +30,18 @@ const useBillingReads = (accountId: string | undefined) => {
     autoTopUp.isLoading ||
     balance.isLoading;
   const failed = paymentMethod.error || subscription.error || payments.error;
-  // The api enforces access: a 403 on the card or plan read means the caller may not see this account.
-  const forbidden =
-    isForbiddenError(paymentMethod.error) ||
-    isForbiddenError(subscription.error);
+  // The api enforces access: a 403 on any read means the caller may not see this account.
+  const forbidden = [
+    paymentMethod,
+    subscription,
+    payments,
+    autoTopUp,
+    balance,
+  ].some((read) => isForbiddenError(read.error));
+  // Not ready while forbidden, even when a refetch turned 403 with cached data still present.
   const ready =
     !isLoading &&
+    !forbidden &&
     !!paymentMethod.data &&
     !!subscription.data &&
     !!payments.data;

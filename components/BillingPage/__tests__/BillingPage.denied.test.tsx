@@ -91,4 +91,75 @@ describe("BillingPage access", () => {
     ).toBeTruthy();
     expect(screen.queryByText("Payment method")).toBeNull();
   });
+
+  it("renders no panels when a refetch turned 403 while cached data remains", () => {
+    scope.value = {
+      accountId: "5d2be75b-b49b-4c2a-ac0a-63d812430dda",
+      isOrg: false,
+      isMine: false,
+      isResolving: false,
+      scopeLabel: "this account",
+      forced: true,
+      invalid: false,
+      switchToPersonal: vi.fn(),
+    };
+    reads.value = {
+      isLoading: false,
+      failed: forbidden,
+      forbidden: true,
+      ready: true,
+      card: null,
+      balanceUsd: "$1.00",
+      subscription: { data: { status: "none" }, error: forbidden },
+      payments: { data: { pages: [{ payments: [] }] } },
+      autoTopUp: {},
+      autoTopUpSettings: {
+        enabled: false,
+        amountCents: null,
+        thresholdCents: null,
+      },
+    };
+    render(<BillingPage accountId="5d2be75b-b49b-4c2a-ac0a-63d812430dda" />);
+    expect(screen.getByText(/You do not have access/)).toBeTruthy();
+    expect(screen.queryByText("Payment method")).toBeNull();
+    expect(screen.queryByRole("button", { name: "Upgrade" })).toBeNull();
+  });
+
+  it("offers Upgrade only when the forced account is the viewer's own", () => {
+    const ready = {
+      isLoading: false,
+      failed: null,
+      forbidden: false,
+      ready: true,
+      card: null,
+      balanceUsd: "$1.00",
+      subscription: { data: { status: "none" } },
+      payments: { data: { pages: [{ payments: [] }] } },
+      autoTopUp: {},
+      autoTopUpSettings: {
+        enabled: false,
+        amountCents: null,
+        thresholdCents: null,
+      },
+    };
+    const forced = {
+      accountId: "5d2be75b-b49b-4c2a-ac0a-63d812430dda",
+      isOrg: false,
+      isResolving: false,
+      scopeLabel: "this account",
+      forced: true,
+      invalid: false,
+      switchToPersonal: vi.fn(),
+    };
+    scope.value = { ...forced, isMine: false };
+    reads.value = ready;
+    const { unmount } = render(
+      <BillingPage accountId="5d2be75b-b49b-4c2a-ac0a-63d812430dda" />,
+    );
+    expect(screen.queryByRole("button", { name: "Upgrade" })).toBeNull();
+    unmount();
+    scope.value = { ...forced, isMine: true, scopeLabel: "your account" };
+    render(<BillingPage accountId="5d2be75b-b49b-4c2a-ac0a-63d812430dda" />);
+    expect(screen.getByRole("button", { name: "Upgrade" })).toBeTruthy();
+  });
 });
