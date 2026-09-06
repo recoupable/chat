@@ -5,14 +5,14 @@ type Fetcher<T> = (accountId: string, accessToken: string) => Promise<T>;
 
 /** The shared shape of the billing reads: one key per account, Privy bearer, a minute of freshness. */
 const useAccountQuery = <T>(
-  key: string,
+  key: string | string[],
   accountId: string | undefined,
   fetcher: Fetcher<T>,
-  options: { refetchOnWindowFocus?: boolean; retry?: boolean } = {},
+  options: { refetchOnWindowFocus?: boolean; retry?: number | boolean } = {},
 ): UseQueryResult<T> => {
   const { getAccessToken, authenticated } = usePrivy();
   return useQuery({
-    queryKey: [key, accountId],
+    queryKey: [...(Array.isArray(key) ? key : [key]), accountId],
     queryFn: async () => {
       const accessToken = await getAccessToken();
       if (!accessToken) throw new Error("Please sign in to load billing");

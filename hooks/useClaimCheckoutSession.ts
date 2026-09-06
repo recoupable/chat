@@ -49,8 +49,22 @@ export function useClaimCheckoutSession(): void {
         if (!accessToken) throw new Error("no_token");
         const result = await claimCheckoutSession(accessToken, sessionId);
         toast.success(getClaimToast({ ok: true, plan: result.plan }).text);
-        await queryClient.invalidateQueries({ queryKey: ["credits"], exact: false });
-        await queryClient.invalidateQueries({ queryKey: ["proStatus"], exact: false });
+        await queryClient.invalidateQueries({
+          queryKey: ["credits"],
+          exact: false,
+        });
+        await queryClient.invalidateQueries({
+          queryKey: ["proStatus"],
+          exact: false,
+        });
+        await queryClient.invalidateQueries({
+          queryKey: ["subscription"],
+          exact: false,
+        });
+        await queryClient.invalidateQueries({
+          queryKey: ["payments"],
+          exact: false,
+        });
         finish();
       } catch (error) {
         const code = error instanceof Error ? error.message : "unknown";

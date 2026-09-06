@@ -1,4 +1,5 @@
 import { getClientApiBaseUrl } from "@/lib/api/getClientApiBaseUrl";
+import readApiError from "@/lib/billing/readApiError";
 import type { AutoTopUpSettings } from "@/lib/recoup/getAccountAutoTopUp";
 
 export interface AutoTopUpInput {
@@ -7,7 +8,7 @@ export interface AutoTopUpInput {
   thresholdCents: number;
 }
 
-/** PUT /api/accounts/{id}/auto-top-up; throws the api's message on a 4xx. */
+/** PUT /api/accounts/{id}/auto-top-up; throws the api's message on a 4xx or an error envelope. */
 async function updateClientAutoTopUp(
   accountId: string,
   accessToken: string,
@@ -24,11 +25,14 @@ async function updateClientAutoTopUp(
       body: JSON.stringify(input),
     },
   );
-  if (!response.ok) {
-    const body = await response.json().catch(() => ({}));
-    throw new Error(body.error ?? `HTTP ${response.status}`);
+  if (!response.ok) throw await readApiError(response);
+  const body = await response.json();
+  if (body?.status === "error") {
+    throw new Error(
+      typeof body.error === "string" ? body.error : "Could not save settings",
+    );
   }
-  return response.json();
+  return body;
 }
 
 export default updateClientAutoTopUp;

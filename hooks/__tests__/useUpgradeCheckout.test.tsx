@@ -5,11 +5,18 @@ import { useUpgradeCheckout } from "@/hooks/useUpgradeCheckout";
 import createClientCheckoutSession from "@/lib/stripe/createClientCheckoutSession";
 
 const toastError = vi.fn();
+const login = vi.fn();
 let getAccessToken: () => Promise<string | null>;
 
-vi.mock("sonner", () => ({ toast: { error: (...args: unknown[]) => toastError(...args) } }));
-vi.mock("@privy-io/react-auth", () => ({ usePrivy: () => ({ getAccessToken: () => getAccessToken() }) }));
-vi.mock("@/lib/stripe/createClientCheckoutSession", () => ({ default: vi.fn() }));
+vi.mock("sonner", () => ({
+  toast: { error: (...args: unknown[]) => toastError(...args) },
+}));
+vi.mock("@privy-io/react-auth", () => ({
+  usePrivy: () => ({ getAccessToken: () => getAccessToken(), login }),
+}));
+vi.mock("@/lib/stripe/createClientCheckoutSession", () => ({
+  default: vi.fn(),
+}));
 
 describe("useUpgradeCheckout", () => {
   beforeEach(() => {
@@ -21,7 +28,9 @@ describe("useUpgradeCheckout", () => {
     vi.mocked(createClientCheckoutSession).mockResolvedValue(undefined);
     const { result } = renderHook(() => useUpgradeCheckout());
     await act(() => result.current.startCheckout("starter"));
-    expect(createClientCheckoutSession).toHaveBeenCalledWith("token", { plan: "starter" });
+    expect(createClientCheckoutSession).toHaveBeenCalledWith("token", {
+      plan: "starter",
+    });
     expect(toastError).not.toHaveBeenCalled();
   });
 
@@ -36,9 +45,21 @@ describe("useUpgradeCheckout", () => {
   });
 
   it("toasts when the api rejects the session", async () => {
-    vi.mocked(createClientCheckoutSession).mockResolvedValue({ error: new Error("HTTP 400") });
+    vi.mocked(createClientCheckoutSession).mockResolvedValue({
+      error: new Error("HTTP 400"),
+    });
     const { result } = renderHook(() => useUpgradeCheckout());
     await act(() => result.current.startCheckout("pro"));
-    expect(toastError).toHaveBeenCalledWith("Could not open checkout. Please try again.");
+    expect(toastError).toHaveBeenCalledWith(
+      "Could not open checkout. Please try again.",
+    );
+  });
+
+  it("opens Privy login for a signed-out visitor instead of doing nothing", async () => {
+    getAccessToken = async () => null;
+    const { result } = renderHook(() => useUpgradeCheckout());
+    await act(() => result.current.startCheckout("pro"));
+    expect(login).toHaveBeenCalledTimes(1);
+    expect(createClientCheckoutSession).not.toHaveBeenCalled();
   });
 });
