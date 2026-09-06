@@ -7,11 +7,13 @@ import SideMenu from "../SideMenu";
 import { useArtistProvider } from "@/providers/ArtistProvider";
 import ImageWithFallback from "../ImageWithFallback";
 import useIsMobile from "@/hooks/useIsMobile";
+import { useCloseOnRouteChange } from "@/hooks/useCloseOnRouteChange";
 import type { ArtistRecord } from "@/types/Artist";
 
 const Header = () => {
   const { push } = useRouter();
   const [isOpenMobileMenu, setIsOpenMobileMenu] = useState(false);
+  useCloseOnRouteChange(() => setIsOpenMobileMenu(false));
   const {
     selectedArtist,
     toggleSettingModal,

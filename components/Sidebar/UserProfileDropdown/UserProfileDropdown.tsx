@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import {
   DropdownMenuContent,
   DropdownMenuSeparator,
@@ -10,6 +11,7 @@ import IdentityGroup from "./IdentityGroup";
 import SettingsGroup from "./SettingsGroup";
 import ExternalLinksGroup from "./ExternalLinksGroup";
 import LogoutButton from "./LogoutButton";
+import PROFILE_MENU_LAYER from "@/components/Sidebar/UserProfileDropdown/profileMenuLayer";
 
 const UserProfileDropdown = () => {
   const { toggleModal, userData, email } = useUserProvider();
@@ -26,7 +28,10 @@ const UserProfileDropdown = () => {
       .toUpperCase() || "U";
 
   return (
-    <DropdownMenuContent className="w-64" align="start">
+    <DropdownMenuContent
+      className={cn("w-64", PROFILE_MENU_LAYER)}
+      align="start"
+    >
       {/* User identity block — avatar + name + badge + email + credits */}
       <div className="flex gap-3 px-3 pt-3 pb-2">
         <Avatar className="h-10 w-10 shrink-0">
