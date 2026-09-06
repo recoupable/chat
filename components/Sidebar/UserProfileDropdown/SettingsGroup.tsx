@@ -13,6 +13,7 @@ import ConnectorsMenuItem from "./ConnectorsMenuItem";
 import ApiKeysMenuItem from "./ApiKeysMenuItem";
 import themeLabel from "@/lib/sidebar/themeLabel";
 import getThemeIcon from "@/lib/sidebar/getThemeIcon";
+import PROFILE_MENU_LAYER from "@/components/Sidebar/UserProfileDropdown/profileMenuLayer";
 
 const SettingsGroup = () => {
   const { theme, setTheme } = useTheme();
@@ -30,7 +31,7 @@ const SettingsGroup = () => {
             {themeLabel(theme)}
           </span>
         </DropdownMenuSubTrigger>
-        <DropdownMenuSubContent>
+        <DropdownMenuSubContent className={PROFILE_MENU_LAYER}>
           <DropdownMenuItem
             onSelect={() => setTheme("light")}
             className="cursor-pointer"

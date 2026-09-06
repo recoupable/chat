@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import useAccountOrganizations from "@/hooks/useAccountOrganizations";
 import { useOrganization } from "@/providers/OrganizationProvider";
+import PROFILE_MENU_LAYER from "@/components/Sidebar/UserProfileDropdown/profileMenuLayer";
 
 const OrgSelector = () => {
   const { data: organizations, isLoading } = useAccountOrganizations();
@@ -15,7 +16,7 @@ const OrgSelector = () => {
     useOrganization();
 
   const selectedOrg = organizations?.find(
-    (org) => org.organization_id === selectedOrgId
+    (org) => org.organization_id === selectedOrgId,
   );
 
   const handleSettingsClick = (e: React.MouseEvent, orgId: string) => {
@@ -34,12 +35,10 @@ const OrgSelector = () => {
         <Building2 className="h-4 w-4" />
         <span className="truncate flex-1">Organization</span>
         <span className="text-xs text-muted-foreground truncate max-w-[80px]">
-          {isLoading
-            ? "..."
-            : selectedOrg?.organization_name || "Personal"}
+          {isLoading ? "..." : selectedOrg?.organization_name || "Personal"}
         </span>
       </DropdownMenuSubTrigger>
-      <DropdownMenuSubContent>
+      <DropdownMenuSubContent className={PROFILE_MENU_LAYER}>
         {/* Personal account option */}
         <DropdownMenuItem
           onClick={() => setSelectedOrgId(null)}
@@ -89,4 +88,3 @@ const OrgSelector = () => {
 };
 
 export default OrgSelector;
-

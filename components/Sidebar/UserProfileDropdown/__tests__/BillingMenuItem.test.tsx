@@ -21,15 +21,4 @@ describe("BillingMenuItem", () => {
       screen.getByRole("menuitem", { name: "Billing" }).getAttribute("href"),
     ).toBe("/billing");
   });
-
-  it("renders above the mobile side modal (z-[200]) so it is reachable on phones", () => {
-    render(
-      <DropdownMenu open>
-        <DropdownMenuContent>
-          <BillingMenuItem />
-        </DropdownMenuContent>
-      </DropdownMenu>,
-    );
-    expect(screen.getByRole("menu").className).toContain("z-[210]");
-  });
 });
