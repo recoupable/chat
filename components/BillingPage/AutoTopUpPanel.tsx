@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
+import AutoTopUpSwitch from "./AutoTopUpSwitch";
 import BillingPanel from "./BillingPanel";
 import MoneyInput from "./MoneyInput";
 import type { AutoTopUpSettings } from "@/lib/recoup/getAccountAutoTopUp";
@@ -10,7 +10,7 @@ import toDollars from "@/lib/billing/toDollars";
 import toCents from "@/lib/billing/toCents";
 import describeAutoTopUpHint from "./describeAutoTopUpHint";
 
-/** Toggle, amount, threshold and Save; disabled with a hint until a card is on file. */
+/** Toggle, amount, threshold and Save; disabled with a hint and a tooltip until a card is on file. */
 const AutoTopUpPanel = ({
   settings,
   hasCard,
@@ -40,11 +40,11 @@ const AutoTopUpPanel = ({
     <BillingPanel
       title="Auto top-up"
       aside={
-        <Switch
-          checked={hasCard && enabled}
-          onCheckedChange={setEnabled}
-          disabled={!hasCard || isSaving}
-          aria-label="Auto top-up"
+        <AutoTopUpSwitch
+          hasCard={hasCard}
+          enabled={enabled}
+          onToggle={setEnabled}
+          isSaving={isSaving}
         />
       }
     >
