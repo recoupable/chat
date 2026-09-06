@@ -90,4 +90,15 @@ describe("useBillingReads", () => {
     expect(result.current.ready).toBe(true);
     expect(result.current.balanceUsd).toBeNull();
   });
+
+  it("drops a cached balance once its refetch fails", () => {
+    reads.balance = {
+      data: 12400000,
+      isLoading: false,
+      error: new Error("x"),
+      isError: true,
+    };
+    const { result } = renderHook(() => useBillingReads("acct-1"));
+    expect(result.current.balanceUsd).toBeNull();
+  });
 });

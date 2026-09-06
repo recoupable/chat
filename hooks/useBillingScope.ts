@@ -46,11 +46,13 @@ const useBillingScope = (forcedAccountId?: string): BillingScope => {
     isResolving || invalid
       ? undefined
       : memberships.data?.find((o) => o.organization_id === wanted);
-  const accountId = invalid
-    ? undefined
-    : forced
-      ? forcedAccountId
-      : (org?.organization_id ?? (isResolving ? undefined : me));
+  // No account, so no reads, until the id is classified: forced ids wait too.
+  const accountId =
+    invalid || isResolving
+      ? undefined
+      : forced
+        ? forcedAccountId
+        : (org?.organization_id ?? me);
   const isMine = !!accountId && accountId === me;
   const isOrg = !!org || (isResolving && !forced);
   const scopeLabel = org

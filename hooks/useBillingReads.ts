@@ -46,9 +46,11 @@ const useBillingReads = (accountId: string | undefined) => {
     !!subscription.data &&
     !!payments.data;
   const card = paymentMethod.data?.card ?? null;
-  // Null when the balance read failed: the panel says so instead of claiming $0.00.
+  // Null when the balance read failed, even with a stale cached value: the panel says so instead of claiming a number.
   const balanceUsd =
-    balance.data === undefined ? null : formatCreditsAsUsd(balance.data);
+    balance.error || balance.data === undefined
+      ? null
+      : formatCreditsAsUsd(balance.data);
   // Documented defaults when the account has never configured auto top-up (or the read failed).
   const autoTopUpSettings = autoTopUp.data ?? {
     account_id: accountId as string,

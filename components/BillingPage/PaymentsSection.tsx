@@ -12,7 +12,7 @@ const PaymentsSection = ({
 }: {
   payments: UseInfiniteQueryResult<InfiniteData<AccountPaymentsPage>>;
 }) => (
-  <>
+  <section>
     <h2 className="mb-3 mt-6 font-heading text-base font-semibold tracking-tight">
       Payments
     </h2>
@@ -25,7 +25,7 @@ const PaymentsSection = ({
         isLoading={payments.isFetchingNextPage}
       />
     )}
-  </>
+  </section>
 );
 
 export default PaymentsSection;
