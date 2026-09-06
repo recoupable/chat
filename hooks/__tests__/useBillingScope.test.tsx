@@ -51,6 +51,7 @@ describe("useBillingScope", () => {
     const { result } = renderHook(() => useBillingScope());
     expect(result.current.accountId).toBe("acct-1");
     expect(result.current.isOrg).toBe(false);
+    expect(result.current.isMine).toBe(true);
     expect(result.current.scopeLabel).toBe("your account");
   });
 

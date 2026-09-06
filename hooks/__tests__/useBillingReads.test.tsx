@@ -28,8 +28,37 @@ vi.mock("@/hooks/useAutoTopUp", () => ({ default: () => reads.autoTopUp }));
 vi.mock("@/hooks/useAccountBalance", () => ({ default: () => reads.balance }));
 
 describe("useBillingReads", () => {
+  const forbidden = () => ({
+    data: undefined,
+    isLoading: false,
+    error: Object.assign(new Error("Failed: 403"), { status: 403 }),
+    isError: true,
+  });
+
   beforeEach(() => {
     reads.balance = settled(12400000);
+    reads.payments = settled({ pages: [{ payments: [] }] });
+    reads.autoTopUp = settled(null);
+    reads.subscription = settled({ status: "none" });
+  });
+
+  it("is forbidden and not ready when the payments or auto top-up read is a 403", () => {
+    reads.payments = forbidden();
+    let { result } = renderHook(() => useBillingReads("acct-1"));
+    expect(result.current.forbidden).toBe(true);
+    expect(result.current.ready).toBe(false);
+    reads.payments = settled({ pages: [{ payments: [] }] });
+    reads.autoTopUp = forbidden();
+    ({ result } = renderHook(() => useBillingReads("acct-1")));
+    expect(result.current.forbidden).toBe(true);
+    expect(result.current.ready).toBe(false);
+  });
+
+  it("is not ready when a refetch turns 403 while cached data remains", () => {
+    reads.subscription = { ...forbidden(), data: { status: "active" } };
+    const { result } = renderHook(() => useBillingReads("acct-1"));
+    expect(result.current.forbidden).toBe(true);
+    expect(result.current.ready).toBe(false);
   });
 
   it("formats the balance as dollars once it has loaded", () => {
@@ -59,6 +88,17 @@ describe("useBillingReads", () => {
     };
     const { result } = renderHook(() => useBillingReads("acct-1"));
     expect(result.current.ready).toBe(true);
+    expect(result.current.balanceUsd).toBeNull();
+  });
+
+  it("drops a cached balance once its refetch fails", () => {
+    reads.balance = {
+      data: 12400000,
+      isLoading: false,
+      error: new Error("x"),
+      isError: true,
+    };
+    const { result } = renderHook(() => useBillingReads("acct-1"));
     expect(result.current.balanceUsd).toBeNull();
   });
 });

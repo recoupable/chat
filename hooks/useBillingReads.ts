@@ -4,6 +4,7 @@ import usePayments from "@/hooks/usePayments";
 import useAutoTopUp from "@/hooks/useAutoTopUp";
 import useAccountBalance from "@/hooks/useAccountBalance";
 import { formatCreditsAsUsd } from "@/lib/credits/formatCreditsAsUsd";
+import isForbiddenError from "@/lib/usage/isForbiddenError";
 
 const NO_AUTO_TOP_UP = {
   enabled: false,
@@ -29,16 +30,27 @@ const useBillingReads = (accountId: string | undefined) => {
     autoTopUp.isLoading ||
     balance.isLoading;
   const failed = paymentMethod.error || subscription.error || payments.error;
+  // The api enforces access: a 403 on any read means the caller may not see this account.
+  const forbidden = [
+    paymentMethod,
+    subscription,
+    payments,
+    autoTopUp,
+    balance,
+  ].some((read) => isForbiddenError(read.error));
+  // Not ready while forbidden, even when a refetch turned 403 with cached data still present.
   const ready =
     !isLoading &&
+    !forbidden &&
     !!paymentMethod.data &&
     !!subscription.data &&
     !!payments.data;
   const card = paymentMethod.data?.card ?? null;
-  const rows = payments.data?.pages.flatMap((page) => page.payments) ?? [];
-  // Null when the balance read failed: the panel says so instead of claiming $0.00.
+  // Null when the balance read failed, even with a stale cached value: the panel says so instead of claiming a number.
   const balanceUsd =
-    balance.data === undefined ? null : formatCreditsAsUsd(balance.data);
+    balance.error || balance.data === undefined
+      ? null
+      : formatCreditsAsUsd(balance.data);
   // Documented defaults when the account has never configured auto top-up (or the read failed).
   const autoTopUpSettings = autoTopUp.data ?? {
     account_id: accountId as string,
@@ -53,9 +65,9 @@ const useBillingReads = (accountId: string | undefined) => {
     autoTopUpSettings,
     isLoading,
     failed,
+    forbidden,
     ready,
     card,
-    rows,
     balanceUsd,
   };
 };

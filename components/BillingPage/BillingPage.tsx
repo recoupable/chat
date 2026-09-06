@@ -7,16 +7,24 @@ import useBillingMutations from "@/hooks/useBillingMutations";
 import autoTopUpPanelKey from "./autoTopUpPanelKey";
 import BillingPageHeader from "./BillingPageHeader";
 import BillingSkeleton from "./BillingSkeleton";
+import BillingAccessDenied from "./BillingAccessDenied";
 import PaymentMethodPanel from "./PaymentMethodPanel";
 import PlanPanel from "./PlanPanel";
 import AutoTopUpPanel from "./AutoTopUpPanel";
-import PaymentsTable from "./PaymentsTable";
-import UsageLoadMore from "@/components/UsagePage/UsageLoadMore";
+import PaymentsSection from "./PaymentsSection";
 
-/** Card, plan, auto top-up and payments for the signed-in account or the selected organization. */
-const BillingPage = () => {
-  const { accountId, isOrg, isResolving, scopeLabel, switchToPersonal } =
-    useBillingScope();
+/**
+ * Card, plan, auto top-up and payments for the signed-in account, the selected
+ * organization, or (via /billing/{accountId}) a specific account the api lets
+ * the caller read.
+ */
+const BillingPage = ({
+  accountId: forcedAccountId,
+}: {
+  accountId?: string;
+}) => {
+  const scope = useBillingScope(forcedAccountId);
+  const { accountId, isMine, isOrg, forced, invalid } = scope;
   const {
     subscription,
     payments,
@@ -24,23 +32,26 @@ const BillingPage = () => {
     autoTopUpSettings,
     isLoading,
     failed,
+    forbidden,
     ready,
     card,
-    rows,
     balanceUsd,
   } = useBillingReads(accountId);
   const actions = useBillingMutations(accountId);
+  // The api said no (403) or the id cannot be an account: no panels, no mutations.
+  const denied = invalid || forbidden;
 
   return (
     <PageContainer className="max-w-4xl py-8">
-      <BillingPageHeader scope={scopeLabel} />
-      {(isResolving || isLoading) && <BillingSkeleton />}
-      {!isLoading && failed && (
+      <BillingPageHeader scope={scope.scopeLabel} />
+      {denied && <BillingAccessDenied />}
+      {!denied && (scope.isResolving || isLoading) && <BillingSkeleton />}
+      {!denied && !isLoading && failed && (
         <p className="text-sm text-muted-foreground">
           Billing could not be loaded. Try again in a moment.
         </p>
       )}
-      {ready && subscription.data && payments.data && (
+      {!denied && ready && subscription.data && payments.data && (
         <>
           <div className="mb-4 flex flex-col gap-4 md:flex-row">
             <PaymentMethodPanel
@@ -48,13 +59,15 @@ const BillingPage = () => {
               onConfigure={actions.configureCard}
               onRemove={() => actions.removeCard.mutate()}
               isBusy={actions.removeCard.isPending}
-              onSwitchToPersonal={isOrg ? switchToPersonal : undefined}
+              onSwitchToPersonal={
+                isOrg && !forced ? scope.switchToPersonal : undefined
+              }
             />
             <PlanPanel
               subscription={subscription.data}
               onUpgrade={actions.upgrade}
               onManage={actions.manageBilling}
-              canUpgrade={!isOrg}
+              canUpgrade={isMine}
             />
           </div>
           <div className="mb-4">
@@ -72,16 +85,7 @@ const BillingPage = () => {
               }
             />
           </div>
-          <h2 className="mb-3 mt-6 font-heading text-base font-semibold tracking-tight">
-            Payments
-          </h2>
-          <PaymentsTable payments={rows} />
-          {payments.hasNextPage && (
-            <UsageLoadMore
-              onClick={() => payments.fetchNextPage()}
-              isLoading={payments.isFetchingNextPage}
-            />
-          )}
+          <PaymentsSection payments={payments} />
         </>
       )}
     </PageContainer>
